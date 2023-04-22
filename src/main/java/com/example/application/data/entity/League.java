@@ -15,14 +15,14 @@ import java.util.Date;
 @Setter
 @MappedSuperclass
 public abstract class League implements Serializable {
-//    @Column(name = "Div")
-//    private String div;
-//
-//    @Column(name = "Date")
-//    private Date date;
-//
-//    @Column(name = "HomeTeam")
-//    private String homeTeam;
+    @Column(name = "Div")
+    private String div;
+
+    @Column(name = "Date")
+    private Date date;
+
+    @Column(name = "HomeTeam")
+    private String homeTeam;
 
     @EmbeddedId
     private PrimaryInfo id;

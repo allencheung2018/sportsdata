@@ -5,7 +5,7 @@ import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "E0")
+@Table(name = "D1")
 @NoArgsConstructor
-public class E0 extends League{
+public class D1 extends League{
 }
