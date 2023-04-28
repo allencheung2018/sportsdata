@@ -1,0 +1,178 @@
+package com.example.application.views.list;
+
+import com.example.application.data.entity.ProbabilityGame;
+import com.example.application.data.entity.TeamInfo;
+import com.example.application.data.repository.SP_1Repository;
+import com.example.application.data.service.DataService;
+import com.example.application.views.MainLayout;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.data.util.Pair;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
+
+import static com.example.application.views.list.ListViewE0.getChance025;
+import static com.example.application.views.list.ListViewE0.getChance_025;
+
+
+@PageTitle("SP1 | Sports")
+@Route(value = "SP1", layout = MainLayout.class)
+@Slf4j
+public class ListViewSP1 extends ListView {
+
+    final private SP_1Repository repository;
+    private final DataService dataService;
+    Pair<Date, Date> pair;
+    List<String> teamNames;
+
+    private float ah = 0;
+    private ListViewE0.ProbabilityGameCompute pgCompute = new ListViewE0.ProbabilityGameCompute();
+
+
+    public ListViewSP1(SP_1Repository repository, DataService dataService) {
+        super();
+        this.repository = repository;
+        this.dataService = dataService;
+        initTeamsAndDate();
+        updateToolbar(teamNames, pair);
+
+        add(getTestButton());
+    }
+
+    private void initTeamsAndDate() {
+        pair = dateSeason.get("2223");
+        teamNames = repository.getTeamBetweenDate(pair.getFirst(), pair.getSecond());
+    }
+
+    public TeamInfo searchTeamInfo(String name, Date begin, Date end) {
+        TeamInfo teamInfo = new TeamInfo();
+        teamInfo.setName(name);
+        teamInfo.setGame(repository.getCountGames(name, begin, end));
+        teamInfo.setHost(repository.getCountHost(name, begin, end));
+        teamInfo.setHostWin(repository.getCountHostWin(name, begin, end));
+        teamInfo.setHostDraw(repository.getCountHostDraw(name, begin, end));
+        teamInfo.setHostUp(repository.getCountHostUp(name, begin, end));
+        teamInfo.setHostUpWin(repository.getCountHostUpWin(name, begin, end));
+        teamInfo.setHostUpDraw(repository.getCountHostUpDraw(name, begin, end));
+        teamInfo.setHostDown(repository.getCountHostDown(name, begin, end));
+        teamInfo.setHostDownWin(repository.getCountHostDownWin(name, begin, end));
+        teamInfo.setHostDownDraw(repository.getCountHostDownDraw(name, begin, end));
+        teamInfo.setHostTie(repository.getCountHostTie(name, begin, end));
+        teamInfo.setHostTieWin(repository.getCountHostTieWin(name, begin, end));
+        teamInfo.setAway(repository.getCountAway(name, begin, end));
+        teamInfo.setAwayWin(repository.getCountAwayWin(name, begin, end));
+        teamInfo.setAwayDraw(repository.getCountAwayDraw(name, begin, end));
+        teamInfo.setAwayUp(repository.getCountAwayUp(name, begin, end));
+        teamInfo.setAwayUpWin(repository.getCountAwayUpWin(name, begin, end));
+        teamInfo.setAwayUpDraw(repository.getCountAwayUpDraw(name, begin, end));
+        teamInfo.setAwayDown(repository.getCountAwayDown(name, begin, end));
+        teamInfo.setAwayDownWin(repository.getCountAwayDownWin(name, begin, end));
+        teamInfo.setAwayDownDraw(repository.getCountAwayDownDraw(name, begin, end));
+        teamInfo.setAwayTie(repository.getCountAwayTie(name, begin, end));
+        teamInfo.setAwayTieWin(repository.getCountAwayTieWin(name, begin, end));
+        teamInfo.setHostOddsWin(teamInfo.getHostUpWin() + teamInfo.getHostDownWin());
+        teamInfo.setAwayOddsWin(teamInfo.getAwayUpWin() + teamInfo.getAwayDownWin());
+        return teamInfo;
+    }
+
+    @Override
+    public List<TeamInfo> searchAgainstTeams(Object home, Object away, LocalDate begin, LocalDate end) {
+        List<TeamInfo> list = Lists.newArrayList();
+        list.add(searchTeamInfo((String) home, Date.valueOf(begin), Date.valueOf(end)));
+        list.add(searchTeamInfo((String) away, Date.valueOf(begin), Date.valueOf(end)));
+        return list;
+    }
+
+    @Override
+    public List<TeamInfo> getAllTeamsInfo(Date begin, Date end) {
+        List<TeamInfo> list = Lists.newArrayList();
+        teamNames.forEach(team -> list.add(searchTeamInfo(team, begin, end)));
+        return list;
+    }
+
+    @Override
+    public List<ProbabilityGame> getProbabilityGameAH(float ah, LocalDate begin, LocalDate end) {
+        this.ah = ah;
+        ProbabilityGame probabilityGame = new ProbabilityGame();
+        int total = repository.getAHCount(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setTotalMatch(String.valueOf(total));
+        int hostWin = repository.getAHCountHostWin(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setHostWin(String.valueOf(hostWin));
+        int hostWin2Ball = repository.getAHCountHostWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setHostWin2Ball(String.valueOf(hostWin2Ball));
+        int hostWin1Ball = repository.getAHCountHostWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setHostWin1Ball(String.valueOf(hostWin1Ball));
+        int draw = repository.getAHCountDraw(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setDraw(String.valueOf(draw));
+        int awayWin = repository.getAHCountAwayWin(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setAwayWin(String.valueOf(awayWin));
+        int awayWin1Ball = repository.getAHCountAwayWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setAwayWin1Ball(String.valueOf(awayWin1Ball));
+        int awayWin2Ball = repository.getAHCountAwayWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
+        probabilityGame.setAwayWin2Ball(String.valueOf(awayWin2Ball));
+
+        ProbabilityGame probabilityPercentage = new ProbabilityGame();
+        float totalMatch = (float) total / total;
+        probabilityPercentage.setTotalMatch(String.format("%.1f", totalMatch * 100));
+        pgCompute.setTotalMatch(totalMatch);
+        float hostWinRate = (float) hostWin / total;
+        probabilityPercentage.setHostWin(String.format("%.1f", hostWinRate * 100));
+        pgCompute.setHostWin(hostWinRate);
+        float hostWin1BallRate = (float) hostWin1Ball / total;
+        probabilityPercentage.setHostWin1Ball(String.format("%.1f", hostWin1BallRate * 100));
+        pgCompute.setHostWin1Ball(hostWin1BallRate);
+        float hostWin2BallRate = (float) hostWin2Ball / total;
+        probabilityPercentage.setHostWin2Ball(String.format("%.1f", hostWin2BallRate * 100));
+        pgCompute.setHostWin2Ball(hostWin2BallRate);
+        float drawRate = (float) draw / total;
+        probabilityPercentage.setDraw(String.format("%.1f", drawRate * 100));
+        pgCompute.setDraw(drawRate);
+        float awayWinRate = (float) awayWin / total;
+        probabilityPercentage.setAwayWin(String.format("%.1f", awayWinRate * 100));
+        pgCompute.setAwayWin(awayWinRate);
+        float awayWin1BallRate = (float) awayWin1Ball / total;
+        probabilityPercentage.setAwayWin1Ball(String.format("%.1f", awayWin1BallRate * 100));
+        pgCompute.setAwayWin1Ball(awayWin1BallRate);
+        float awayWin2BallRate = (float) awayWin2Ball / total;
+        probabilityPercentage.setAwayWin2Ball(String.format("%.1f", awayWin2BallRate * 100));
+        pgCompute.setAwayWin2Ball(awayWin2BallRate);
+
+        return List.of(probabilityGame, probabilityPercentage);
+    }
+
+    @Override
+    public ListViewE0.ChanceGame getChance(String ah) {
+        if (ah.equals("0")) {
+
+        } else if (ah.equals("-0.25")) {
+            return getChance_025(pgCompute);
+        } else if (ah.equals("0.25")) {
+            return getChance025(pgCompute);
+        }
+        return new ListViewE0.ChanceGame();
+    }
+
+    @Override
+    public String getUpProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getUpProfit(ah, Float.valueOf(odds), pgCompute);
+    }
+
+
+    @Override
+    public Button getTestButton() {
+        Button button = new Button("Test Connection");
+        button.addClickListener(event -> {
+            log.debug("count = " + repository.getAHCount(-0.25, pair.getFirst(), pair.getSecond()));
+            log.debug("Team:" + repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31")));
+        });
+        return button;
+    }
+}

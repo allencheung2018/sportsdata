@@ -133,7 +133,7 @@ public abstract class ListView extends VerticalLayout {
         });
         comboBoxAH.setItems(AsianHandicap);
         comboBoxAH.addValueChangeListener(event -> {
-            grid.setItems(getProbabilityGameAH(Float.valueOf((String) comboBoxAH.getValue()), datePickerBegin.getValue(),
+            grid.setItems(getProbabilityGameAH(Float.valueOf(comboBoxAH.getValue()), datePickerBegin.getValue(),
                     datePickerEnd.getValue()));
             updateChance((String) event.getValue());
         });

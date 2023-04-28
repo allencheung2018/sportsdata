@@ -147,22 +147,47 @@ public class ListViewE0 extends ListView {
 
     @Override
     public ChanceGame getChance(String ah) {
-        ChanceGame chanceGame = new ChanceGame();
         if (ah.equals("0")) {
 
         } else if (ah.equals("-0.25")) {
-            chanceGame.upChance = pgCompute.hostWin;
-            chanceGame.up_1_Chance = pgCompute.hostWin;
-            chanceGame.up_2_Chance = pgCompute.hostWin;
-            chanceGame.up_3_Chance = pgCompute.hostWin + pgCompute.draw;
-            chanceGame.downChance = pgCompute.awayWin + pgCompute.draw;
-            chanceGame.down_1_Chance = pgCompute.awayWin + pgCompute.draw;
-            chanceGame.down_2_Chance = pgCompute.awayWin + pgCompute.draw;
-            chanceGame.down_3_Chance = pgCompute.awayWin + pgCompute.draw;
-            chanceGame.hostDrawChance = pgCompute.hostWin + pgCompute.draw;
-            chanceGame.awayDrawChance = pgCompute.awayWin + pgCompute.draw;
-            chanceGame.hostAwayChance = pgCompute.awayWin + pgCompute.hostWin;
+            return getChance_025(pgCompute);
+        } else if (ah.equals("0.25")) {
+            return getChance025(pgCompute);
         }
+        return new ChanceGame();
+    }
+
+    public static ChanceGame getChance_025(ProbabilityGameCompute pgCompute){
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDownChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance025(ProbabilityGameCompute pgCompute){
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getAwayWin());
+        chanceGame.setUp_1_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_2_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDownChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
         return chanceGame;
     }
 
@@ -199,6 +224,7 @@ public class ListViewE0 extends ListView {
     }
 
     @Getter
+    @Setter
     public static class ChanceGame {
         private double upChance;
         private double up_1_Chance;
