@@ -157,4 +157,25 @@ public interface D_1Repository extends JpaRepository<D1, League.PrimaryInfo> {
             "AND date BETWEEN :begin AND :end")
     @Cacheable("AHCountAwayWin2Ball_D1")
     int getAHCountAwayWin2Ball(double ah, Date begin, Date end);
+
+    @Query("SELECT date, homeTeam, awayTeam, ftHomeGoal, ftAwayGoal, ahCurrentHome, ahHome FROM D1 " +
+            "WHERE date BETWEEN :begin AND :end")
+    @Cacheable("GamesByDate_D1")
+    List<D1> getGamesByDate(Date begin, Date end);
+
+    @Query("SELECT date, homeTeam, awayTeam, ftHomeGoal, ftAwayGoal, ahCurrentHome, ahHome FROM D1 " +
+            "WHERE ahCurrentHome = :ah AND date BETWEEN :begin AND :end")
+    @Cacheable("GamesByAHCh_D1")
+    List<D1> getGamesByAHCh(double ah, Date begin, Date end);
+
+    @Query("SELECT  date, homeTeam, awayTeam, ftHomeGoal, ftAwayGoal, ahCurrentHome, ahHome FROM D1 " +
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND date BETWEEN :begin AND :end")
+    @Cacheable("GamesByTeam_D1")
+    List<D1> getGamesByTeam(String team, Date begin, Date end);
+
+    @Query("SELECT  date, homeTeam, awayTeam, ftHomeGoal, ftAwayGoal, ahCurrentHome, ahHome  FROM D1 " +
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND ahCurrentHome = :ah " +
+            "AND date BETWEEN :begin AND :end")
+    @Cacheable("GamesByTeamAndAHCh_D1")
+    List<D1> getGamesByTeamAndAHCh(String team, double ah, Date begin, Date end);
 }

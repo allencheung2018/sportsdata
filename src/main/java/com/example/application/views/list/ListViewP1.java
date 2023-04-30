@@ -1,5 +1,6 @@
 package com.example.application.views.list;
 
+import com.example.application.data.entity.GameInfo;
 import com.example.application.data.entity.ProbabilityGame;
 import com.example.application.data.entity.TeamInfo;
 import com.example.application.data.repository.P_1Repository;
@@ -147,6 +148,11 @@ public class ListViewP1 extends ListView {
         pgCompute.setAwayWin2Ball(awayWin2BallRate);
 
         return List.of(probabilityGame, probabilityPercentage);
+    }
+
+    @Override
+    public List<GameInfo> getGameInfo(String nameTeam, String ah, LocalDate begin, LocalDate end) {
+        return null;
     }
 
     @Override

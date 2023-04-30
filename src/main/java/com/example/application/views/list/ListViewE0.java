@@ -1,5 +1,6 @@
 package com.example.application.views.list;
 
+import com.example.application.data.entity.GameInfo;
 import com.example.application.data.entity.ProbabilityGame;
 import com.example.application.data.entity.TeamInfo;
 import com.example.application.data.repository.E_0Repository;
@@ -151,6 +152,18 @@ public class ListViewE0 extends ListView {
         pgCompute.setAwayWin2Ball(awayWin2BallRate);
 
         return List.of(probabilityGame, probabilityPercentage);
+    }
+
+    @Override
+    public List<GameInfo> getGameInfo(String nameTeam, String ah, LocalDate begin, LocalDate end) {
+        if (nameTeam.equals("All") && ah.equals("All")) {
+            return e0Repository.getGamesByDate(Date.valueOf(begin), Date.valueOf(end));
+        } else if (nameTeam.equals("All")) {
+            return e0Repository.getGamesByAHCh(Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
+        } else if (ah.equals("All")) {
+            return e0Repository.getGamesByTeam(nameTeam, Date.valueOf(begin), Date.valueOf(end));
+        }
+        return e0Repository.getGamesByTeamAndAHCh(nameTeam, Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
     }
 
     @Override

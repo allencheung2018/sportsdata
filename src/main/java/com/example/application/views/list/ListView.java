@@ -1,11 +1,14 @@
 package com.example.application.views.list;
 
+import com.example.application.data.entity.GameInfo;
+import com.example.application.data.entity.League;
 import com.example.application.data.entity.ProbabilityGame;
 import com.example.application.data.entity.TeamInfo;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.util.Pair;
 
 import java.sql.Date;
@@ -41,7 +45,7 @@ public abstract class ListView extends VerticalLayout {
     private Button searchButton = new Button("Search");
     private ComboBox<String> comboBoxAH = new ComboBox("AHCh");
     private Button buttonGetChance = new Button("Get Chance");
-    private Grid<ProbabilityGame> grid;
+    private Grid<ProbabilityGame> probabilityGameGrid;
     private TextField upRate = new TextField("上盘");
     private TextField upChance = new TextField("概率");
     private TextField up_1_Rate = new TextField("上盘降1");
@@ -71,8 +75,9 @@ public abstract class ListView extends VerticalLayout {
         setWidthFull();
         configureDate();
         add(getEstimationArea());
-        grid = getChanceGrid("probabilityGrid");
-        add(grid);
+        probabilityGameGrid = getChanceGrid("probabilityGrid");
+        add(probabilityGameGrid);
+        add(getGameListLayout());
         add(getToolBar());
         add(new Label("Against teams"));
         againstGrid = configureGrid("againstGrid");
@@ -143,7 +148,7 @@ public abstract class ListView extends VerticalLayout {
         });
         comboBoxAH.setItems(AsianHandicap);
         comboBoxAH.addValueChangeListener(event -> {
-            grid.setItems(getProbabilityGameAH(Float.valueOf(comboBoxAH.getValue()), datePickerBegin.getValue(),
+            probabilityGameGrid.setItems(getProbabilityGameAH(Float.valueOf(comboBoxAH.getValue()), datePickerBegin.getValue(),
                     datePickerEnd.getValue()));
             updateChance(event.getValue());
         });
@@ -217,6 +222,45 @@ public abstract class ListView extends VerticalLayout {
         return verticalLayout;
     }
 
+    private ComboBox<String> comboBoxTeams = new ComboBox("Team");
+    private VerticalLayout getGameListLayout() {
+        VerticalLayout verticalLayout = new VerticalLayout();
+        ComboBox<String> comboBox = new ComboBox("AHCh");
+        List<String> list = Lists.newArrayList();
+        list.addAll(AsianHandicap);
+        list.add(0, "All");
+        comboBox.setItems(list);
+        comboBox.setValue(list.get(0));
+        comboBox.addValueChangeListener(event -> {
+
+        });
+        Button button = new Button("GetGames");
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(comboBoxTeams, comboBox, button);
+        buttonLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
+
+        Grid<GameInfo> leagueGrid = new Grid<>(GameInfo.class);
+        leagueGrid.setColumns(League.nameColumns);
+        FooterRow footer = leagueGrid.prependFooterRow();
+        FooterRow.FooterCell footerCellCost = footer.getCell(leagueGrid.getColumnByKey("date"));
+        footerCellCost.setText("0");
+
+        comboBoxTeams.addValueChangeListener(event -> {
+
+        });
+        button.addClickListener(event -> {
+            List<GameInfo> list1 = getGameInfo(comboBoxTeams.getValue(), comboBox.getValue(),
+                    datePickerBegin.getValue(), datePickerEnd.getValue());
+            leagueGrid.setItems(list1);
+            footerCellCost.setText("Rows: " + list1.size());
+        });
+
+        verticalLayout.add(buttonLayout, leagueGrid);
+
+        return verticalLayout;
+    }
+
+
     private void updateChance(String ah) {
         ListViewE0.ChanceGame chanceGame = getChance(ah);
 
@@ -254,7 +298,7 @@ public abstract class ListView extends VerticalLayout {
         HorizontalLayout horizontalLayout = new HorizontalLayout(comboBoxHome, comboBoxAway, searchButton);
         searchButton.setHeightFull();
         searchButton.addClickListener(event -> searchEvent());
-        horizontalLayout.setVerticalComponentAlignment(Alignment.CENTER, searchButton);
+        horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         return horizontalLayout;
     }
 
@@ -289,6 +333,12 @@ public abstract class ListView extends VerticalLayout {
         comboBoxAway.setValue(homes.get(0));
         datePickerBegin.setValue(pair.getFirst().toLocalDate());
         datePickerEnd.setValue(pair.getSecond().toLocalDate());
+
+        List<String> list = Lists.newArrayList();
+        list.addAll(homes);
+        list.add(0, "All");
+        comboBoxTeams.setItems(list);
+        comboBoxTeams.setValue(homes.get(0));
 
         comboBoxAH.setValue(AsianHandicap.get(1));
     }
@@ -325,6 +375,7 @@ public abstract class ListView extends VerticalLayout {
     public abstract String getHostDrawProfit(String ah, String odds);
     public abstract String getAwayDrawProfit(String ah, String odds);
     public abstract String getHostAwayProfit(String ah, String odds);
+    public abstract List<GameInfo> getGameInfo(String nameTeam, String ah, LocalDate begin, LocalDate end);
 
     public abstract Button getTestButton();
 
