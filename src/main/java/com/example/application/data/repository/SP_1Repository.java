@@ -56,7 +56,7 @@ public interface SP_1Repository extends JpaRepository<SP1, League.PrimaryInfo> {
     @Cacheable("countHostDownWin_SP1")
     int getCountHostDownWin(String name, Date begin, Date end);
 
-    @Query("SELECT COUNT(*) FROM SP1 WHERE (ftHomeGoal - ftAwayGoal + ahCurrentHome) > 0 AND ahCurrentHome > 0 " +
+    @Query("SELECT COUNT(*) FROM SP1 WHERE (ftHomeGoal - ftAwayGoal + ahCurrentHome) = 0 AND ahCurrentHome > 0 " +
             "AND homeTeam =:name AND date BETWEEN :begin AND :end")
     @Cacheable("countHostDownDraw_SP1")
     int getCountHostDownDraw(String name, Date begin, Date end);

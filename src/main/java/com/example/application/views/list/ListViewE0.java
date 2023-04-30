@@ -6,6 +6,7 @@ import com.example.application.data.repository.E_0Repository;
 import com.example.application.data.service.DataService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.util.List;
 @Slf4j
 public class ListViewE0 extends ListView {
 
+    final static private String nameLeague = "England Premier League";
     final private E_0Repository e0Repository;
     private final DataService dataService;
     Pair<Date, Date> pair;
@@ -36,12 +38,18 @@ public class ListViewE0 extends ListView {
 
     public ListViewE0(E_0Repository e0Repository, DataService dataService) {
         super();
+        addLeagueName();
         this.e0Repository = e0Repository;
         this.dataService = dataService;
         initTeamsAndDate();
         updateToolbar(teamNames, pair);
 
-        add(getTestButton());
+//        add(getTestButton());
+    }
+
+    private void addLeagueName() {
+        Label label = new Label(nameLeague);
+        addComponentAsFirst(label);
     }
 
     private void initTeamsAndDate() {
@@ -148,16 +156,45 @@ public class ListViewE0 extends ListView {
     @Override
     public ChanceGame getChance(String ah) {
         if (ah.equals("0")) {
-
+            return getChance_0(pgCompute);
         } else if (ah.equals("-0.25")) {
             return getChance_025(pgCompute);
         } else if (ah.equals("0.25")) {
             return getChance025(pgCompute);
+        } else if (ah.equals("-0.75")) {
+            return getChance_075(pgCompute);
+        } else if (ah.equals("0.75")) {
+            return getChance075(pgCompute);
+        } else if (ah.equals("-1")) {
+            return getChance_10(pgCompute);
+        } else if (ah.equals("1")) {
+            return getChance10(pgCompute);
+        } else if (ah.equals("-1.25")) {
+            return getChance_125(pgCompute);
+        } else if (ah.equals("1.25")) {
+            return getChance125(pgCompute);
         }
         return new ChanceGame();
     }
 
-    public static ChanceGame getChance_025(ProbabilityGameCompute pgCompute){
+    public static ChanceGame getChance_0(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin()  + pgCompute.getDraw());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDownChance(pgCompute.getAwayWin());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance_025(ProbabilityGameCompute pgCompute) {
         ChanceGame chanceGame = new ChanceGame();
 
         chanceGame.setUpChance(pgCompute.getHostWin());
@@ -174,7 +211,7 @@ public class ListViewE0 extends ListView {
         return chanceGame;
     }
 
-    public static ChanceGame getChance025(ProbabilityGameCompute pgCompute){
+    public static ChanceGame getChance025(ProbabilityGameCompute pgCompute) {
         ChanceGame chanceGame = new ChanceGame();
 
         chanceGame.setUpChance(pgCompute.getAwayWin());
@@ -191,6 +228,142 @@ public class ListViewE0 extends ListView {
         return chanceGame;
     }
 
+    public static ChanceGame getChance_05(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDownChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance05(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getAwayWin());
+        chanceGame.setUp_1_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_2_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_3_Chance(pgCompute.getAwayWin());
+        chanceGame.setDownChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance_075(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin());
+        chanceGame.setDownChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getHostWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getHostWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance075(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getAwayWin());
+        chanceGame.setUp_1_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_2_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_3_Chance(pgCompute.getAwayWin());
+        chanceGame.setDownChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_2_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance_10(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin() - pgCompute.getHostWin1Ball());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin());
+        chanceGame.setDownChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getHostWin1Ball());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getHostWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getHostWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance10(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getAwayWin() - pgCompute.getAwayWin1Ball());
+        chanceGame.setUp_1_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_2_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_3_Chance(pgCompute.getAwayWin());
+        chanceGame.setDownChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setDown_1_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_2_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance_125(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getHostWin());
+        chanceGame.setUp_1_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_2_Chance(pgCompute.getHostWin());
+        chanceGame.setUp_3_Chance(pgCompute.getHostWin());
+        chanceGame.setDownChance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_1_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_2_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getAwayWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
+    public static ChanceGame getChance125(ProbabilityGameCompute pgCompute) {
+        ChanceGame chanceGame = new ChanceGame();
+
+        chanceGame.setUpChance(pgCompute.getAwayWin() - pgCompute.getAwayWin1Ball());
+        chanceGame.setUp_1_Chance(pgCompute.getAwayWin() - pgCompute.getAwayWin1Ball());
+        chanceGame.setUp_2_Chance(pgCompute.getAwayWin());
+        chanceGame.setUp_3_Chance(pgCompute.getAwayWin());
+        chanceGame.setDownChance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_1_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_2_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setDown_3_Chance(pgCompute.getHostWin() + pgCompute.getDraw() + pgCompute.getAwayWin1Ball());
+        chanceGame.setHostDrawChance(pgCompute.getHostWin() + pgCompute.getDraw());
+        chanceGame.setAwayDrawChance(pgCompute.getAwayWin() + pgCompute.getDraw());
+        chanceGame.setHostAwayChance(pgCompute.getAwayWin() + pgCompute.getHostWin());
+        return chanceGame;
+    }
+
     @Override
     public String getUpProfit(String ah, String odds) {
         if (odds.isEmpty() || odds.equals("0")) {
@@ -199,13 +372,204 @@ public class ListViewE0 extends ListView {
         return getUpProfit(ah, Float.parseFloat(odds), pgCompute);
     }
 
-    public static String getUpProfit(String ah, float odds, ProbabilityGameCompute pgCompute){
+    @Override
+    public String getDownProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getDownProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getUp_1_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getUp_1_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getUp_2_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getUp_2_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getUp_3_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getUp_3_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_1_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getDown_1_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_2_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getDown_2_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_3_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getDown_3_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getHostDrawProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getHostDrawProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getAwayDrawProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getAwayDrawProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getHostAwayProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return getHostAwayProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    public static String getUpProfit(String ah, float odds, ProbabilityGameCompute pgCompute) {
         double result = 0;
         if (ah.equals("0")) {
-
+            result = odds * pgCompute.getHostWin() - 1 * pgCompute.getAwayWin();
         } else if (ah.equals("-0.25")) {
-            result = odds * pgCompute.hostWin - 0.5 * pgCompute.draw - 1.0 * pgCompute.awayWin;
+            result = odds * pgCompute.getHostWin() - 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        } else if (ah.equals("0.25")) {
+            result = odds * pgCompute.getAwayWin() - 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
+        } else if (ah.equals("-0.5")) {
+            result = odds * pgCompute.getHostWin() - 1 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        } else if (ah.equals("0.5")) {
+            result = odds * pgCompute.getAwayWin() - 1 * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
+        } else if (ah.equals("-0.75")) {
+            result = odds * pgCompute.getHostWin() - 0.5 * odds * pgCompute.getHostWin1Ball()
+                    - 1 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        } else if (ah.equals("0.75")) {
+            result = odds * pgCompute.getAwayWin() - 0.5 * odds * pgCompute.awayWin1Ball
+                    - 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        } else if (ah.equals("-1")) {
+            result = odds * (pgCompute.getHostWin() - pgCompute.hostWin1Ball)
+                    - 1.0 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        } else if (ah.equals("1")) {
+            result = odds * (pgCompute.getAwayWin() - pgCompute.awayWin1Ball)
+                    - 1.0 * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
         }
+        return String.format("%.3f", result);
+    }
+
+    public static String getUp_1_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * pgCompute.getHostWin() + odds * 0.5 * pgCompute.getDraw() - 1 * pgCompute.getAwayWin();
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getHostWin() - 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getUp_2_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * (pgCompute.getHostWin() + pgCompute.getDraw()) - 1 * pgCompute.getAwayWin();
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getHostWin() + odds * 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+
+    public static String getUp_3_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * (pgCompute.getHostWin() + pgCompute.getDraw())
+                    - 0.5 * pgCompute.getAwayWin1Ball() - 1 * (pgCompute.getAwayWin() - pgCompute.getAwayWin1Ball());
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getHostWin() + odds * pgCompute.getDraw() - 1.0 * pgCompute.getAwayWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getDownProfit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * pgCompute.getAwayWin() - 1 * pgCompute.getHostWin();
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getAwayWin() + 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getDown_1_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * pgCompute.getAwayWin() + odds * 0.5 * pgCompute.getDraw()
+                    - 1 * pgCompute.getHostWin();
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getAwayWin() - 1.0 * pgCompute.getHostWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getDown_2_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * pgCompute.getAwayWin() + odds * pgCompute.getDraw()
+                    - 1 * pgCompute.getHostWin();
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getAwayWin() + odds * 0.5 * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getDown_3_Profit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = 0;
+        if (ah.equals("0")) {
+            result = odds * pgCompute.getAwayWin() + odds * pgCompute.getDraw()
+                    - 0.5 * pgCompute.getHostWin1Ball() - 1 * (pgCompute.getHostWin() - pgCompute.getHostWin1Ball());
+        } else if (ah.equals("-0.25")) {
+            result = odds * pgCompute.getAwayWin() + odds * pgCompute.getDraw() - 1.0 * pgCompute.getHostWin();
+        }
+        return String.format("%.3f", result);
+    }
+
+    public static String getHostDrawProfit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = odds * (pgCompute.getHostWin() + pgCompute.getDraw()) - 1.0 * pgCompute.getAwayWin();
+
+        return String.format("%.3f", result);
+    }
+
+    public static String getAwayDrawProfit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = odds * (pgCompute.getAwayWin() + pgCompute.getDraw()) - 1.0 * pgCompute.getHostWin();
+
+        return String.format("%.3f", result);
+    }
+
+    public static String getHostAwayProfit(String ah, float odds, ProbabilityGameCompute pgCompute) {
+        double result = odds * (pgCompute.getHostWin() + pgCompute.getAwayWin()) - 1.0 * pgCompute.getDraw();
+
         return String.format("%.3f", result);
     }
 

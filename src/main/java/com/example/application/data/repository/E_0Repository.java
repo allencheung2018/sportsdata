@@ -14,7 +14,7 @@ import java.util.List;
 public interface E_0Repository extends JpaRepository<E0, League.PrimaryInfo> {
 
     @Query("SELECT DISTINCT homeTeam FROM E0 WHERE date BETWEEN :begin AND :end")
-    @Cacheable("teamBetweenDate")
+    @Cacheable("teamBetweenDate_E0")
     List<String> getTeamBetweenDate(Date begin, Date end);
 
     @Query("SELECT COUNT(*) FROM E0 WHERE (homeTeam =:name OR awayTeam =:name) AND date BETWEEN :begin AND :end")
@@ -56,7 +56,7 @@ public interface E_0Repository extends JpaRepository<E0, League.PrimaryInfo> {
     @Cacheable("countHostDownWin_E0")
     int getCountHostDownWin(String name, Date begin, Date end);
 
-    @Query("SELECT COUNT(*) FROM E0 WHERE (ftHomeGoal - ftAwayGoal + ahCurrentHome) > 0 AND ahCurrentHome > 0 " +
+    @Query("SELECT COUNT(*) FROM E0 WHERE (ftHomeGoal - ftAwayGoal + ahCurrentHome) = 0 AND ahCurrentHome > 0 " +
             "AND homeTeam =:name AND date BETWEEN :begin AND :end")
     @Cacheable("countHostDownDraw_E0")
     int getCountHostDownDraw(String name, Date begin, Date end);

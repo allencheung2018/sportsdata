@@ -6,6 +6,7 @@ import com.example.application.data.repository.SP_1Repository;
 import com.example.application.data.service.DataService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.example.application.views.list.ListViewE0.getChance025;
-import static com.example.application.views.list.ListViewE0.getChance_025;
+import static com.example.application.views.list.ListViewE0.*;
 
 
 @PageTitle("SP1 | Sports")
@@ -25,6 +25,7 @@ import static com.example.application.views.list.ListViewE0.getChance_025;
 @Slf4j
 public class ListViewSP1 extends ListView {
 
+    final static private String nameLeague = "Spain Primera Liga";
     final private SP_1Repository repository;
     private final DataService dataService;
     Pair<Date, Date> pair;
@@ -38,10 +39,16 @@ public class ListViewSP1 extends ListView {
         super();
         this.repository = repository;
         this.dataService = dataService;
+        addLeagueName();
         initTeamsAndDate();
         updateToolbar(teamNames, pair);
 
-        add(getTestButton());
+//        add(getTestButton());
+    }
+
+    private void addLeagueName() {
+        Label label = new Label(nameLeague);
+        addComponentAsFirst(label);
     }
 
     private void initTeamsAndDate() {
@@ -148,13 +155,25 @@ public class ListViewSP1 extends ListView {
     @Override
     public ListViewE0.ChanceGame getChance(String ah) {
         if (ah.equals("0")) {
-
+            return getChance_0(pgCompute);
         } else if (ah.equals("-0.25")) {
             return getChance_025(pgCompute);
         } else if (ah.equals("0.25")) {
             return getChance025(pgCompute);
+        } else if (ah.equals("-0.75")) {
+            return getChance_075(pgCompute);
+        } else if (ah.equals("0.75")) {
+            return getChance075(pgCompute);
+        } else if (ah.equals("-1")) {
+            return getChance_10(pgCompute);
+        } else if (ah.equals("1")) {
+            return getChance10(pgCompute);
+        } else if (ah.equals("-1.25")) {
+            return getChance_125(pgCompute);
+        } else if (ah.equals("1.25")) {
+            return getChance125(pgCompute);
         }
-        return new ListViewE0.ChanceGame();
+        return new ChanceGame();
     }
 
     @Override
@@ -162,9 +181,88 @@ public class ListViewSP1 extends ListView {
         if (odds.isEmpty() || odds.equals("0")) {
             return "void";
         }
-        return ListViewE0.getUpProfit(ah, Float.valueOf(odds), pgCompute);
+        return ListViewE0.getUpProfit(ah, Float.parseFloat(odds), pgCompute);
     }
 
+    @Override
+    public String getUp_1_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getUp_1_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getUp_2_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getUp_2_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getUp_3_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getUp_3_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDownProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getDownProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_1_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getDown_1_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_2_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getDown_2_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getDown_3_Profit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getDown_3_Profit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getHostDrawProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getHostDrawProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getAwayDrawProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getAwayDrawProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
+
+    @Override
+    public String getHostAwayProfit(String ah, String odds) {
+        if (odds.isEmpty() || odds.equals("0")) {
+            return "void";
+        }
+        return ListViewE0.getHostAwayProfit(ah, Float.parseFloat(odds), pgCompute);
+    }
 
     @Override
     public Button getTestButton() {

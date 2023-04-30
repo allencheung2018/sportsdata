@@ -130,12 +130,22 @@ public abstract class ListView extends VerticalLayout {
         HorizontalLayout buttonArea = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH, buttonGetChance);
         buttonGetChance.addClickListener(event -> {
            upChance.setValue(getUpProfit(comboBoxAH.getValue(), upRate.getValue()));
+           up_1_Chance.setValue(getUp_1_Profit(comboBoxAH.getValue(), up_1_Rate.getValue()));
+           up_2_Chance.setValue(getUp_2_Profit(comboBoxAH.getValue(), up_2_Rate.getValue()));
+           up_3_Chance.setValue(getUp_3_Profit(comboBoxAH.getValue(), up_3_Rate.getValue()));
+           downChance.setValue(getDownProfit(comboBoxAH.getValue(), downRate.getValue()));
+           down_1_Chance.setValue(getDown_1_Profit(comboBoxAH.getValue(), down_1_Rate.getValue()));
+           down_2_Chance.setValue(getDown_2_Profit(comboBoxAH.getValue(), down_2_Rate.getValue()));
+           down_3_Chance.setValue(getDown_3_Profit(comboBoxAH.getValue(), down_3_Rate.getValue()));
+           hostDrawChance.setValue(getHostDrawProfit(comboBoxAH.getValue(), hostDraw.getValue()));
+           awayDrawChance.setValue(getAwayDrawProfit(comboBoxAH.getValue(), awayDraw.getValue()));
+           hostAwayChance.setValue(getHostAwayProfit(comboBoxAH.getValue(), hostAway.getValue()));
         });
         comboBoxAH.setItems(AsianHandicap);
         comboBoxAH.addValueChangeListener(event -> {
             grid.setItems(getProbabilityGameAH(Float.valueOf(comboBoxAH.getValue()), datePickerBegin.getValue(),
                     datePickerEnd.getValue()));
-            updateChance((String) event.getValue());
+            updateChance(event.getValue());
         });
         buttonArea.setDefaultVerticalComponentAlignment(Alignment.END);
 
@@ -305,6 +315,16 @@ public abstract class ListView extends VerticalLayout {
     public abstract ListViewE0.ChanceGame getChance(String ah);
 
     public abstract String getUpProfit(String ah, String odds);
+    public abstract String getUp_1_Profit(String ah, String odds);
+    public abstract String getUp_2_Profit(String ah, String odds);
+    public abstract String getUp_3_Profit(String ah, String odds);
+    public abstract String getDownProfit(String ah, String odds);
+    public abstract String getDown_1_Profit(String ah, String odds);
+    public abstract String getDown_2_Profit(String ah, String odds);
+    public abstract String getDown_3_Profit(String ah, String odds);
+    public abstract String getHostDrawProfit(String ah, String odds);
+    public abstract String getAwayDrawProfit(String ah, String odds);
+    public abstract String getHostAwayProfit(String ah, String odds);
 
     public abstract Button getTestButton();
 
