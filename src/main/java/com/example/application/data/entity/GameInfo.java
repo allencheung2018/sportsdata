@@ -10,6 +10,7 @@ import java.sql.Date;
 @Setter
 @AllArgsConstructor
 public class GameInfo {
+
         private Date date;
         private String homeTeam;
         private String awayTeam;

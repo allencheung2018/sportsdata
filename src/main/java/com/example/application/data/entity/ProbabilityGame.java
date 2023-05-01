@@ -1,13 +1,11 @@
 package com.example.application.data.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.List;
 
-@NoArgsConstructor
 @Getter
 @Setter
 public class ProbabilityGame {
@@ -23,6 +21,22 @@ public class ProbabilityGame {
     private String awayWin;
     private String awayWin1Ball;
     private String awayWin2Ball;
+
+    public ProbabilityGame() {
+
+    }
+
+    public ProbabilityGame(String totalMatch, String hostWin2Ball, String hostWin1Ball, String hostWin, String draw,
+                           String awayWin, String awayWin1Ball, String awayWin2Ball) {
+        this.totalMatch = totalMatch;
+        this.hostWin2Ball = hostWin2Ball;
+        this.hostWin1Ball = hostWin1Ball;
+        this.hostWin = hostWin;
+        this.draw = draw;
+        this.awayWin = awayWin;
+        this.awayWin1Ball = awayWin1Ball;
+        this.awayWin2Ball = awayWin2Ball;
+    }
 
     public static String getQueryStringAHCount(String tableName, String ah) {
         return "SELECT COUNT(*) FROM " + tableName  + " WHERE ahCurrentHome = " + ah

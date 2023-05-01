@@ -14,6 +14,19 @@ import java.util.List;
 @Repository
 public interface E_0Repository extends JpaRepository<E0, League.PrimaryInfo> {
 
+    @Query("SELECT " +
+            "SUM(CASE WHEN ahCurrentHome IS NOT NULL THEN 1 ELSE 0 END) AS totalMatch, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 2 THEN 1 ELSE 0 END) AS hostWin2Ball, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 1 THEN 1 ELSE 0 END) AS hostWin1Ball, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal > 0 THEN 1 ELSE 0 END) AS hostWin, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 0 THEN 1 ELSE 0 END) AS draw, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal > 0 THEN 1 ELSE 0 END) AS awayWin, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal = 1 THEN 1 ELSE 0 END) AS awayWin1Ball, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal = 2 THEN 1 ELSE 0 END) AS awayWin2Ball " +
+            "FROM E0 WHERE ahCurrentHome =:ahch AND date BETWEEN :begin AND :end")
+    @Cacheable("teamGameInfoByAHCh_E0")
+    Object getGameInfoByAHCh(double ahch, Date begin, Date end);
+
     @Query("SELECT DISTINCT homeTeam FROM E0 WHERE date BETWEEN :begin AND :end")
     @Cacheable("teamBetweenDate_E0")
     List<String> getTeamBetweenDate(Date begin, Date end);

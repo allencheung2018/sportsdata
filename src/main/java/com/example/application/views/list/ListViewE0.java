@@ -19,7 +19,9 @@ import org.springframework.data.util.Pair;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @PageTitle("E0 | Sports")
@@ -107,47 +109,43 @@ public class ListViewE0 extends ListView {
     @Override
     public List<ProbabilityGame> getProbabilityGameAH(float ah, LocalDate begin, LocalDate end) {
         this.ah = ah;
-        ProbabilityGame probabilityGame = new ProbabilityGame();
-        int total = e0Repository.getAHCount(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setTotalMatch(String.valueOf(total));
-        int hostWin = e0Repository.getAHCountHostWin(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin(String.valueOf(hostWin));
-        int hostWin2Ball = e0Repository.getAHCountHostWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin2Ball(String.valueOf(hostWin2Ball));
-        int hostWin1Ball = e0Repository.getAHCountHostWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin1Ball(String.valueOf(hostWin1Ball));
-        int draw = e0Repository.getAHCountDraw(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setDraw(String.valueOf(draw));
-        int awayWin = e0Repository.getAHCountAwayWin(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin(String.valueOf(awayWin));
-        int awayWin1Ball = e0Repository.getAHCountAwayWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin1Ball(String.valueOf(awayWin1Ball));
-        int awayWin2Ball = e0Repository.getAHCountAwayWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin2Ball(String.valueOf(awayWin2Ball));
+        Object o = e0Repository.getGameInfoByAHCh(ah, Date.valueOf(begin), Date.valueOf(end));
+        List<String> list = Arrays.stream(((Object[])o)).map(String::valueOf).collect(Collectors.toList());
+        ProbabilityGame probabilityGame = new ProbabilityGame(list.get(0), list.get(1), list.get(2), list.get(3),
+                list.get(4), list.get(5), list.get(6), list.get(7));
+        probabilityGame.setTotalMatch(probabilityGame.getTotalMatch());
+        probabilityGame.setHostWin(probabilityGame.getHostWin());
+        probabilityGame.setHostWin2Ball(probabilityGame.getAwayWin2Ball());
+        probabilityGame.setHostWin1Ball(probabilityGame.getHostWin1Ball());
+        probabilityGame.setDraw(probabilityGame.getDraw());
+        probabilityGame.setAwayWin(probabilityGame.getAwayWin());
+        probabilityGame.setAwayWin1Ball(probabilityGame.getAwayWin1Ball());
+        probabilityGame.setAwayWin2Ball(probabilityGame.getAwayWin2Ball());
 
+        float total = Float.parseFloat(probabilityGame.getTotalMatch());
         ProbabilityGame probabilityPercentage = new ProbabilityGame();
-        float totalMatch = (float) total / total;
+        float totalMatch = total / total;
         probabilityPercentage.setTotalMatch(String.format("%.1f", totalMatch * 100));
         pgCompute.setTotalMatch(totalMatch);
-        float hostWinRate = (float) hostWin / total;
+        float hostWinRate = Float.parseFloat(probabilityGame.getHostWin()) / total;
         probabilityPercentage.setHostWin(String.format("%.1f", hostWinRate * 100));
         pgCompute.setHostWin(hostWinRate);
-        float hostWin1BallRate = (float) hostWin1Ball / total;
+        float hostWin1BallRate = Float.parseFloat(probabilityGame.getHostWin1Ball()) / total;
         probabilityPercentage.setHostWin1Ball(String.format("%.1f", hostWin1BallRate * 100));
         pgCompute.setHostWin1Ball(hostWin1BallRate);
-        float hostWin2BallRate = (float) hostWin2Ball / total;
+        float hostWin2BallRate = Float.parseFloat(probabilityGame.getHostWin2Ball())  / total;
         probabilityPercentage.setHostWin2Ball(String.format("%.1f", hostWin2BallRate * 100));
         pgCompute.setHostWin2Ball(hostWin2BallRate);
-        float drawRate = (float) draw / total;
+        float drawRate = Float.parseFloat(probabilityGame.getDraw())  / total;
         probabilityPercentage.setDraw(String.format("%.1f", drawRate * 100));
         pgCompute.setDraw(drawRate);
-        float awayWinRate = (float) awayWin / total;
+        float awayWinRate = Float.parseFloat(probabilityGame.getAwayWin())  / total;
         probabilityPercentage.setAwayWin(String.format("%.1f", awayWinRate * 100));
         pgCompute.setAwayWin(awayWinRate);
-        float awayWin1BallRate = (float) awayWin1Ball / total;
+        float awayWin1BallRate = Float.parseFloat(probabilityGame.getAwayWin1Ball())  / total;
         probabilityPercentage.setAwayWin1Ball(String.format("%.1f", awayWin1BallRate * 100));
         pgCompute.setAwayWin1Ball(awayWin1BallRate);
-        float awayWin2BallRate = (float) awayWin2Ball / total;
+        float awayWin2BallRate = Float.parseFloat(probabilityGame.getAwayWin2Ball())  / total;
         probabilityPercentage.setAwayWin2Ball(String.format("%.1f", awayWin2BallRate * 100));
         pgCompute.setAwayWin2Ball(awayWin2BallRate);
 
@@ -620,8 +618,11 @@ public class ListViewE0 extends ListView {
     public Button getTestButton() {
         Button button = new Button("Test Connection");
         button.addClickListener(event -> {
-            log.debug("count = " + e0Repository.getAHCount(-0.25, pair.getFirst(), pair.getSecond()));
-            log.debug("Team:" + e0Repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31")));
+            Object o = e0Repository.getGameInfoByAHCh(-0.25, pair.getFirst(), pair.getSecond());
+            List<String> list = Arrays.stream(((Object[])o)).map(String::valueOf).collect(Collectors.toList());
+            ProbabilityGame probabilityGame = new ProbabilityGame(list.get(0), list.get(1), list.get(2), list.get(3),
+                    list.get(4), list.get(5), list.get(6), list.get(7));
+            log.debug("count = " + probabilityGame.getTotalMatch());
         });
         return button;
     }
