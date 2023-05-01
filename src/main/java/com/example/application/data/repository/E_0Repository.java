@@ -160,25 +160,26 @@ public interface E_0Repository extends JpaRepository<E0, League.PrimaryInfo> {
     int getAHCountAwayWin2Ball(double ah, Date begin, Date end);
 
     @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
-            "ftAwayGoal, ahCurrentHome, ahHome) FROM E0 WHERE date BETWEEN :begin AND :end")
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM E0 WHERE date BETWEEN :begin AND :end ORDER BY date DESC")
     @Cacheable("GamesByDate_E0")
     List<GameInfo> getGamesByDate(Date begin, Date end);
 
     @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
             "ftAwayGoal, ahCurrentHome, ahHome) FROM E0 " +
-            "WHERE ahCurrentHome = :ah AND date BETWEEN :begin AND :end")
+            "WHERE ahCurrentHome = :ah AND date BETWEEN :begin AND :end ORDER BY date DESC")
     @Cacheable("GamesByAHCh_E0")
     List<GameInfo> getGamesByAHCh(double ah, Date begin, Date end);
 
-    @Query("SELECT new com.example.application.data.entity.GameInfo(e.date, e.homeTeam, e.awayTeam, e.ftHomeGoal, " +
-            "e.ftAwayGoal, e.ahCurrentHome, e.ahHome) FROM E0 e " +
-            "WHERE (e.homeTeam = :team OR e.awayTeam = :team) AND e.date BETWEEN :begin AND :end")
+    @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM E0 " +
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND date BETWEEN :begin AND :end ORDER BY date DESC")
     @Cacheable("GamesByTeam_E0")
     List<GameInfo> getGamesByTeam(String team, Date begin, Date end);
 
     @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
             "ftAwayGoal, ahCurrentHome, ahHome) FROM E0 " +
-            "WHERE (homeTeam = :team OR awayTeam = :team) AND ahCurrentHome = :ah AND date BETWEEN :begin AND :end")
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND ahCurrentHome = :ah AND date BETWEEN :begin AND :end "
+            + "ORDER BY date DESC")
     @Cacheable("GamesByTeamAndAHCh_E0")
     List<GameInfo> getGamesByTeamAndAHCh(String team, double ah, Date begin, Date end);
 }
