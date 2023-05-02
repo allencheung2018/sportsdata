@@ -16,7 +16,9 @@ import org.springframework.data.util.Pair;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.application.views.list.ListViewE0.*;
 
@@ -26,7 +28,7 @@ import static com.example.application.views.list.ListViewE0.*;
 public class ListViewD1 extends ListView{
 
     final static private String nameLeague = "Germany Bundesliga I";
-    final private D_1Repository d1Repository;
+    final private D_1Repository repository;
     Pair<Date, Date> pair;
     List<String> teamNames;
     private float ah = 0;
@@ -34,7 +36,7 @@ public class ListViewD1 extends ListView{
 
     public ListViewD1(D_1Repository d1Repository) {
         super();
-        this.d1Repository = d1Repository;
+        this.repository = d1Repository;
         addLeagueName();
         initTeamsAndDate();
         updateToolbar(teamNames, pair);
@@ -47,48 +49,48 @@ public class ListViewD1 extends ListView{
 
     private void initTeamsAndDate() {
         pair = dateSeason.get("2223");
-        teamNames = d1Repository.getTeamBetweenDate(pair.getFirst(), pair.getSecond());
+        teamNames = repository.getTeamBetweenDate(pair.getFirst(), pair.getSecond());
     }
 
     public TeamInfo searchTeamInfo(String name, Date begin, Date end) {
         TeamInfo teamInfo = new TeamInfo();
         teamInfo.setName(name);
-        teamInfo.setGame(d1Repository.getCountGames(name, begin, end));
-        teamInfo.setHost(d1Repository.getCountHost(name, begin, end));
-        teamInfo.setHostWin(d1Repository.getCountHostWin(name, begin, end));
-        teamInfo.setHostDraw(d1Repository.getCountHostDraw(name, begin, end));
-        teamInfo.setHostUp(d1Repository.getCountHostUp(name, begin, end));
-        teamInfo.setHostUpWin(d1Repository.getCountHostUpWin(name, begin, end));
-        teamInfo.setHostUpDraw(d1Repository.getCountHostUpDraw(name, begin, end));
-        teamInfo.setHostDown(d1Repository.getCountHostDown(name, begin, end));
-        teamInfo.setHostDownWin(d1Repository.getCountHostDownWin(name, begin, end));
-        teamInfo.setHostDownDraw(d1Repository.getCountHostDownDraw(name, begin, end));
-        teamInfo.setHostTie(d1Repository.getCountHostTie(name, begin, end));
-        teamInfo.setHostTieWin(d1Repository.getCountHostTieWin(name, begin, end));
-        teamInfo.setAway(d1Repository.getCountAway(name, begin, end));
-        teamInfo.setAwayWin(d1Repository.getCountAwayWin(name, begin, end));
-        teamInfo.setAwayDraw(d1Repository.getCountAwayDraw(name, begin, end));
-        teamInfo.setAwayUp(d1Repository.getCountAwayUp(name, begin, end));
-        teamInfo.setAwayUpWin(d1Repository.getCountAwayUpWin(name, begin, end));
-        teamInfo.setAwayUpDraw(d1Repository.getCountAwayUpDraw(name, begin, end));
-        teamInfo.setAwayDown(d1Repository.getCountAwayDown(name, begin, end));
-        teamInfo.setAwayDownWin(d1Repository.getCountAwayDownWin(name, begin, end));
-        teamInfo.setAwayDownDraw(d1Repository.getCountAwayDownDraw(name, begin, end));
-        teamInfo.setAwayTie(d1Repository.getCountAwayTie(name, begin, end));
-        teamInfo.setAwayTieWin(d1Repository.getCountAwayTieWin(name, begin, end));
+        teamInfo.setGame(repository.getCountGames(name, begin, end));
+        teamInfo.setHost(repository.getCountHost(name, begin, end));
+        teamInfo.setHostWin(repository.getCountHostWin(name, begin, end));
+        teamInfo.setHostDraw(repository.getCountHostDraw(name, begin, end));
+        teamInfo.setHostUp(repository.getCountHostUp(name, begin, end));
+        teamInfo.setHostUpWin(repository.getCountHostUpWin(name, begin, end));
+        teamInfo.setHostUpDraw(repository.getCountHostUpDraw(name, begin, end));
+        teamInfo.setHostDown(repository.getCountHostDown(name, begin, end));
+        teamInfo.setHostDownWin(repository.getCountHostDownWin(name, begin, end));
+        teamInfo.setHostDownDraw(repository.getCountHostDownDraw(name, begin, end));
+        teamInfo.setHostTie(repository.getCountHostTie(name, begin, end));
+        teamInfo.setHostTieWin(repository.getCountHostTieWin(name, begin, end));
+        teamInfo.setAway(repository.getCountAway(name, begin, end));
+        teamInfo.setAwayWin(repository.getCountAwayWin(name, begin, end));
+        teamInfo.setAwayDraw(repository.getCountAwayDraw(name, begin, end));
+        teamInfo.setAwayUp(repository.getCountAwayUp(name, begin, end));
+        teamInfo.setAwayUpWin(repository.getCountAwayUpWin(name, begin, end));
+        teamInfo.setAwayUpDraw(repository.getCountAwayUpDraw(name, begin, end));
+        teamInfo.setAwayDown(repository.getCountAwayDown(name, begin, end));
+        teamInfo.setAwayDownWin(repository.getCountAwayDownWin(name, begin, end));
+        teamInfo.setAwayDownDraw(repository.getCountAwayDownDraw(name, begin, end));
+        teamInfo.setAwayTie(repository.getCountAwayTie(name, begin, end));
+        teamInfo.setAwayTieWin(repository.getCountAwayTieWin(name, begin, end));
         teamInfo.setHostOddsWin(teamInfo.getHostUpWin() + teamInfo.getHostDownWin());
         teamInfo.setAwayOddsWin(teamInfo.getAwayUpWin() + teamInfo.getAwayDownWin());
         return teamInfo;
     }
 
     public ListDataProvider<TeamInfo> getListData() {
-        List<String> names = d1Repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31"));
+        List<String> names = repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31"));
         List<TeamInfo> list = Lists.newArrayList();
         names.forEach(name -> {
             TeamInfo teamInfo = new TeamInfo();
             teamInfo.setName(name);
             Pair p = dateSeason.get("2223");
-            teamInfo.setGame(d1Repository.getCountGames(name, (Date) p.getFirst(), (Date) p.getSecond()));
+            teamInfo.setGame(repository.getCountGames(name, (Date) p.getFirst(), (Date) p.getSecond()));
             list.add(teamInfo);
         });
         ListDataProvider listDataProvider = new ListDataProvider<>(list);
@@ -113,47 +115,43 @@ public class ListViewD1 extends ListView{
     @Override
     public List<ProbabilityGame> getProbabilityGameAH(float ah, LocalDate begin, LocalDate end) {
         this.ah = ah;
-        ProbabilityGame probabilityGame = new ProbabilityGame();
-        int total = d1Repository.getAHCount(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setTotalMatch(String.valueOf(total));
-        int hostWin = d1Repository.getAHCountHostWin(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin(String.valueOf(hostWin));
-        int hostWin2Ball = d1Repository.getAHCountHostWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin2Ball(String.valueOf(hostWin2Ball));
-        int hostWin1Ball = d1Repository.getAHCountHostWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setHostWin1Ball(String.valueOf(hostWin1Ball));
-        int draw = d1Repository.getAHCountDraw(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setDraw(String.valueOf(draw));
-        int awayWin = d1Repository.getAHCountAwayWin(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin(String.valueOf(awayWin));
-        int awayWin1Ball = d1Repository.getAHCountAwayWin1Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin1Ball(String.valueOf(awayWin1Ball));
-        int awayWin2Ball = d1Repository.getAHCountAwayWin2Ball(ah, Date.valueOf(begin), Date.valueOf(end));
-        probabilityGame.setAwayWin2Ball(String.valueOf(awayWin2Ball));
+        Object o = repository.getGameInfoByAHCh(ah, Date.valueOf(begin), Date.valueOf(end));
+        List<String> list = Arrays.stream(((Object[])o)).map(String::valueOf).collect(Collectors.toList());
+        ProbabilityGame probabilityGame = new ProbabilityGame(list.get(0), list.get(1), list.get(2), list.get(3),
+                list.get(4), list.get(5), list.get(6), list.get(7));
+        probabilityGame.setTotalMatch(probabilityGame.getTotalMatch());
+        probabilityGame.setHostWin(probabilityGame.getHostWin());
+        probabilityGame.setHostWin2Ball(probabilityGame.getAwayWin2Ball());
+        probabilityGame.setHostWin1Ball(probabilityGame.getHostWin1Ball());
+        probabilityGame.setDraw(probabilityGame.getDraw());
+        probabilityGame.setAwayWin(probabilityGame.getAwayWin());
+        probabilityGame.setAwayWin1Ball(probabilityGame.getAwayWin1Ball());
+        probabilityGame.setAwayWin2Ball(probabilityGame.getAwayWin2Ball());
 
+        float total = Float.parseFloat(probabilityGame.getTotalMatch());
         ProbabilityGame probabilityPercentage = new ProbabilityGame();
-        float totalMatch = (float) total / total;
+        float totalMatch = total / total;
         probabilityPercentage.setTotalMatch(String.format("%.1f", totalMatch * 100));
         pgCompute.setTotalMatch(totalMatch);
-        float hostWinRate = (float) hostWin / total;
+        float hostWinRate = Float.parseFloat(probabilityGame.getHostWin()) / total;
         probabilityPercentage.setHostWin(String.format("%.1f", hostWinRate * 100));
         pgCompute.setHostWin(hostWinRate);
-        float hostWin1BallRate = (float) hostWin1Ball / total;
+        float hostWin1BallRate = Float.parseFloat(probabilityGame.getHostWin1Ball()) / total;
         probabilityPercentage.setHostWin1Ball(String.format("%.1f", hostWin1BallRate * 100));
         pgCompute.setHostWin1Ball(hostWin1BallRate);
-        float hostWin2BallRate = (float) hostWin2Ball / total;
+        float hostWin2BallRate = Float.parseFloat(probabilityGame.getHostWin2Ball())  / total;
         probabilityPercentage.setHostWin2Ball(String.format("%.1f", hostWin2BallRate * 100));
         pgCompute.setHostWin2Ball(hostWin2BallRate);
-        float drawRate = (float) draw / total;
+        float drawRate = Float.parseFloat(probabilityGame.getDraw())  / total;
         probabilityPercentage.setDraw(String.format("%.1f", drawRate * 100));
         pgCompute.setDraw(drawRate);
-        float awayWinRate = (float) awayWin / total;
+        float awayWinRate = Float.parseFloat(probabilityGame.getAwayWin())  / total;
         probabilityPercentage.setAwayWin(String.format("%.1f", awayWinRate * 100));
         pgCompute.setAwayWin(awayWinRate);
-        float awayWin1BallRate = (float) awayWin1Ball / total;
+        float awayWin1BallRate = Float.parseFloat(probabilityGame.getAwayWin1Ball())  / total;
         probabilityPercentage.setAwayWin1Ball(String.format("%.1f", awayWin1BallRate * 100));
         pgCompute.setAwayWin1Ball(awayWin1BallRate);
-        float awayWin2BallRate = (float) awayWin2Ball / total;
+        float awayWin2BallRate = Float.parseFloat(probabilityGame.getAwayWin2Ball())  / total;
         probabilityPercentage.setAwayWin2Ball(String.format("%.1f", awayWin2BallRate * 100));
         pgCompute.setAwayWin2Ball(awayWin2BallRate);
 
@@ -162,16 +160,14 @@ public class ListViewD1 extends ListView{
 
     @Override
     public List<GameInfo> getGameInfo(String nameTeam, String ah, LocalDate begin, LocalDate end) {
-//        if (nameTeam.equals("All") && ah.equals("All")) {
-//            return d1Repository.getGamesByDate(Date.valueOf(begin), Date.valueOf(end));
-//        } else if (nameTeam.equals("All")) {
-//            return d1Repository.getGamesByAHCh(Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
-//        } else if (ah.equals("All")) {
-//            return d1Repository.getGamesByTeam(nameTeam, Date.valueOf(begin), Date.valueOf(end));
-//        }
-//
-//        return d1Repository.getGamesByTeamAndAHCh(nameTeam, Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
-        return null;
+        if (nameTeam.equals("All") && ah.equals("All")) {
+            return repository.getGamesByDate(Date.valueOf(begin), Date.valueOf(end));
+        } else if (nameTeam.equals("All")) {
+            return repository.getGamesByAHCh(Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
+        } else if (ah.equals("All")) {
+            return repository.getGamesByTeam(nameTeam, Date.valueOf(begin), Date.valueOf(end));
+        }
+        return repository.getGamesByTeamAndAHCh(nameTeam, Double.parseDouble(ah), Date.valueOf(begin), Date.valueOf(end));
     }
 
     @Override
@@ -290,8 +286,8 @@ public class ListViewD1 extends ListView{
     public Button getTestButton() {
         Button button = new Button("Test Connection");
         button.addClickListener(event -> {
-            log.debug("count = " + d1Repository.count());
-            log.debug("Team:" + d1Repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31")));
+            log.debug("count = " + repository.count());
+            log.debug("Team:" + repository.getTeamBetweenDate(Date.valueOf("2022-8-1"), Date.valueOf("2023-5-31")));
         });
         return button;
     }

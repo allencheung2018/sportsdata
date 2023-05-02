@@ -1,5 +1,6 @@
 package com.example.application.data.repository;
 
+import com.example.application.data.entity.GameInfo;
 import com.example.application.data.entity.League;
 import com.example.application.data.entity.SP1;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +14,19 @@ import java.util.List;
 @Repository
 public interface SP_1Repository extends JpaRepository<SP1, League.PrimaryInfo> {
 
+    @Query("SELECT " +
+            "SUM(CASE WHEN ahCurrentHome IS NOT NULL THEN 1 ELSE 0 END) AS totalMatch, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 2 THEN 1 ELSE 0 END) AS hostWin2Ball, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 1 THEN 1 ELSE 0 END) AS hostWin1Ball, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal > 0 THEN 1 ELSE 0 END) AS hostWin, " +
+            "SUM(CASE WHEN ftHomeGoal - ftAwayGoal = 0 THEN 1 ELSE 0 END) AS draw, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal > 0 THEN 1 ELSE 0 END) AS awayWin, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal = 1 THEN 1 ELSE 0 END) AS awayWin1Ball, " +
+            "SUM(CASE WHEN ftAwayGoal - ftHomeGoal = 2 THEN 1 ELSE 0 END) AS awayWin2Ball " +
+            "FROM SP1 WHERE ahCurrentHome =:ahch AND date BETWEEN :begin AND :end")
+    @Cacheable("teamGameInfoByAHCh_SP1")
+    Object getGameInfoByAHCh(double ahch, Date begin, Date end);
+    
     @Query("SELECT DISTINCT homeTeam FROM SP1 WHERE date BETWEEN :begin AND :end")
     @Cacheable("teamBetweenDate_SP1")
     List<String> getTeamBetweenDate(Date begin, Date end);
@@ -157,4 +171,28 @@ public interface SP_1Repository extends JpaRepository<SP1, League.PrimaryInfo> {
             "AND date BETWEEN :begin AND :end")
     @Cacheable("AHCountAwayWin2Ball_SP1")
     int getAHCountAwayWin2Ball(double ah, Date begin, Date end);
+
+    @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM SP1 WHERE date BETWEEN :begin AND :end ORDER BY date DESC")
+    @Cacheable("GamesByDate_SP1")
+    List<GameInfo> getGamesByDate(Date begin, Date end);
+
+    @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM SP1 " +
+            "WHERE ahCurrentHome = :ah AND date BETWEEN :begin AND :end ORDER BY date DESC")
+    @Cacheable("GamesByAHCh_SP1")
+    List<GameInfo> getGamesByAHCh(double ah, Date begin, Date end);
+
+    @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM SP1 " +
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND date BETWEEN :begin AND :end ORDER BY date DESC")
+    @Cacheable("GamesByTeam_SP1")
+    List<GameInfo> getGamesByTeam(String team, Date begin, Date end);
+
+    @Query("SELECT new com.example.application.data.entity.GameInfo(date, homeTeam, awayTeam, ftHomeGoal, " +
+            "ftAwayGoal, ahCurrentHome, ahHome) FROM SP1 " +
+            "WHERE (homeTeam = :team OR awayTeam = :team) AND ahCurrentHome = :ah AND date BETWEEN :begin AND :end "
+            + "ORDER BY date DESC")
+    @Cacheable("GamesByTeamAndAHCh_SP1")
+    List<GameInfo> getGamesByTeamAndAHCh(String team, double ah, Date begin, Date end);
 }
