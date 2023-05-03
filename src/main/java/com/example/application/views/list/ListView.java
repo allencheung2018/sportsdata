@@ -280,9 +280,10 @@ public abstract class ListView extends VerticalLayout {
     public Grid getChanceGrid(String name){
         Grid<ProbabilityGame> grid = new Grid<>(ProbabilityGame.class);
         grid.setClassName(name);
-        grid.setHeight("160px");
-        grid.setColumns("totalMatch", "hostWin2Ball", "hostWin1Ball", "hostWin", "draw", "awayWin", "awayWin1Ball", "awayWin2Ball");
+        grid.setHeight("320px");
+        grid.setColumns("ah", "totalMatch", "hostWin2Ball", "hostWin1Ball", "hostWin", "draw", "awayWin", "awayWin1Ball", "awayWin2Ball");
         grid.getColumnByKey("totalMatch").setHeader("Total");
+        grid.getColumnByKey("ah").setHeader("AHCh");
         grid.getColumnByKey("hostWin2Ball").setHeader("HW2B");
         grid.getColumnByKey("hostWin1Ball").setHeader("HW1B");
         grid.getColumnByKey("hostWin").setHeader("HWin");

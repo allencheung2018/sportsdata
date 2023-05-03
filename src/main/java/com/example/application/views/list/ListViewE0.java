@@ -115,7 +115,7 @@ public class ListViewE0 extends ListView {
                 list.get(4), list.get(5), list.get(6), list.get(7));
         probabilityGame.setTotalMatch(probabilityGame.getTotalMatch());
         probabilityGame.setHostWin(probabilityGame.getHostWin());
-        probabilityGame.setHostWin2Ball(probabilityGame.getAwayWin2Ball());
+        probabilityGame.setHostWin2Ball(probabilityGame.getHostWin2Ball());
         probabilityGame.setHostWin1Ball(probabilityGame.getHostWin1Ball());
         probabilityGame.setDraw(probabilityGame.getDraw());
         probabilityGame.setAwayWin(probabilityGame.getAwayWin());
