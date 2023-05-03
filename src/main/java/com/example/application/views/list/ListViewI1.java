@@ -106,45 +106,52 @@ public class ListViewI1 extends ListView {
     @Override
     public List<ProbabilityGame> getProbabilityGameAH(float ah, LocalDate begin, LocalDate end) {
         this.ah = ah;
+
+        List<ProbabilityGame> list = Lists.newArrayList();
+        list.addAll(getProbabilityGameByAHCh(ah - 0.25, begin, end));
+        list.addAll(getProbabilityGameByAHCh(ah, begin, end));
+        list.addAll(getProbabilityGameByAHCh(ah + 0.25, begin, end));
+
+        return list;
+    }
+
+    public List<ProbabilityGame> getProbabilityGameByAHCh(double ah, LocalDate begin, LocalDate end) {
+
         Object o = repository.getGameInfoByAHCh(ah, Date.valueOf(begin), Date.valueOf(end));
         List<String> list = Arrays.stream(((Object[])o)).map(String::valueOf).collect(Collectors.toList());
         ProbabilityGame probabilityGame = new ProbabilityGame(list.get(0), list.get(1), list.get(2), list.get(3),
                 list.get(4), list.get(5), list.get(6), list.get(7));
-        probabilityGame.setTotalMatch(probabilityGame.getTotalMatch());
-        probabilityGame.setHostWin(probabilityGame.getHostWin());
-        probabilityGame.setHostWin2Ball(probabilityGame.getHostWin2Ball());
-        probabilityGame.setHostWin1Ball(probabilityGame.getHostWin1Ball());
-        probabilityGame.setDraw(probabilityGame.getDraw());
-        probabilityGame.setAwayWin(probabilityGame.getAwayWin());
-        probabilityGame.setAwayWin1Ball(probabilityGame.getAwayWin1Ball());
-        probabilityGame.setAwayWin2Ball(probabilityGame.getAwayWin2Ball());
+        probabilityGame.setAh(String.valueOf(ah));
 
         float total = Float.parseFloat(probabilityGame.getTotalMatch());
         ProbabilityGame probabilityPercentage = new ProbabilityGame();
         float totalMatch = total / total;
         probabilityPercentage.setTotalMatch(String.format("%.1f", totalMatch * 100));
-        pgCompute.setTotalMatch(totalMatch);
         float hostWinRate = Float.parseFloat(probabilityGame.getHostWin()) / total;
         probabilityPercentage.setHostWin(String.format("%.1f", hostWinRate * 100));
-        pgCompute.setHostWin(hostWinRate);
         float hostWin1BallRate = Float.parseFloat(probabilityGame.getHostWin1Ball()) / total;
         probabilityPercentage.setHostWin1Ball(String.format("%.1f", hostWin1BallRate * 100));
-        pgCompute.setHostWin1Ball(hostWin1BallRate);
         float hostWin2BallRate = Float.parseFloat(probabilityGame.getHostWin2Ball())  / total;
         probabilityPercentage.setHostWin2Ball(String.format("%.1f", hostWin2BallRate * 100));
-        pgCompute.setHostWin2Ball(hostWin2BallRate);
         float drawRate = Float.parseFloat(probabilityGame.getDraw())  / total;
         probabilityPercentage.setDraw(String.format("%.1f", drawRate * 100));
-        pgCompute.setDraw(drawRate);
         float awayWinRate = Float.parseFloat(probabilityGame.getAwayWin())  / total;
         probabilityPercentage.setAwayWin(String.format("%.1f", awayWinRate * 100));
-        pgCompute.setAwayWin(awayWinRate);
         float awayWin1BallRate = Float.parseFloat(probabilityGame.getAwayWin1Ball())  / total;
         probabilityPercentage.setAwayWin1Ball(String.format("%.1f", awayWin1BallRate * 100));
-        pgCompute.setAwayWin1Ball(awayWin1BallRate);
         float awayWin2BallRate = Float.parseFloat(probabilityGame.getAwayWin2Ball())  / total;
         probabilityPercentage.setAwayWin2Ball(String.format("%.1f", awayWin2BallRate * 100));
-        pgCompute.setAwayWin2Ball(awayWin2BallRate);
+
+        if (ah == this.ah) {
+            pgCompute.setTotalMatch(totalMatch);
+            pgCompute.setHostWin(hostWinRate);
+            pgCompute.setHostWin1Ball(hostWin1BallRate);
+            pgCompute.setHostWin2Ball(hostWin2BallRate);
+            pgCompute.setDraw(drawRate);
+            pgCompute.setAwayWin(awayWinRate);
+            pgCompute.setAwayWin1Ball(awayWin1BallRate);
+            pgCompute.setAwayWin2Ball(awayWin2BallRate);
+        }
 
         return List.of(probabilityGame, probabilityPercentage);
     }
