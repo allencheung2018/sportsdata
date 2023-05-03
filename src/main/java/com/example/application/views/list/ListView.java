@@ -218,7 +218,10 @@ public abstract class ListView extends VerticalLayout {
         hostAwayChance.setWidth(20, Unit.MM);
         otherArea.add(hostDraw, hostDrawChance, awayDraw, awayDrawChance, hostAway, hostAwayChance);
 
-        verticalLayout.add(buttonArea, upArea, downArea, otherArea);
+        VerticalLayout verticalLayout1 = new VerticalLayout(upArea, downArea, otherArea);
+        verticalLayout1.setVisible(false);
+
+        verticalLayout.add(buttonArea, verticalLayout1);
         return verticalLayout;
     }
 
@@ -339,7 +342,7 @@ public abstract class ListView extends VerticalLayout {
         list.addAll(homes);
         list.add(0, "All");
         comboBoxTeams.setItems(list);
-        comboBoxTeams.setValue(homes.get(0));
+        comboBoxTeams.setValue(list.get(0));
 
         comboBoxAH.setValue(AsianHandicap.get(1));
     }
