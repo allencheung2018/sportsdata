@@ -40,8 +40,11 @@ public class MainLayout extends AppLayout {
                 new RouterLink("E0", ListViewE0.class),
                 new RouterLink("D1", ListViewD1.class),
                 new RouterLink("SP1", ListViewSP1.class),
+                new RouterLink("SP2", ListViewSP2.class),
                 new RouterLink("I1", ListViewI1.class),
+                new RouterLink("I2", ListViewI2.class),
                 new RouterLink("F1", ListViewF1.class),
+                new RouterLink("N1", ListViewN1.class),
                 new RouterLink("P1", ListViewP1.class)
         ));
     }
