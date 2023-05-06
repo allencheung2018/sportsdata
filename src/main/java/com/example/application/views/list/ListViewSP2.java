@@ -28,7 +28,7 @@ import static com.example.application.views.list.ListViewE0.*;
 @Slf4j
 public class ListViewSP2 extends ListView {
 
-    final static private String nameLeague = "Italy Serie A";
+    final static private String nameLeague = "Spain Segunda";
     final private SP_2Repository repository;
     Pair<Date, Date> pair;
     List<String> teamNames;

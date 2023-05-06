@@ -3,7 +3,7 @@ package com.example.application.views.list;
 import com.example.application.data.entity.GameInfo;
 import com.example.application.data.entity.ProbabilityGame;
 import com.example.application.data.entity.TeamInfo;
-import com.example.application.data.repository.I_2Repository;
+import com.example.application.data.repository.D_2Repository;
 import com.example.application.data.service.DataService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.button.Button;
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 import static com.example.application.views.list.ListViewE0.*;
 
 
-@PageTitle("I2 | Sports")
-@Route(value = "I2", layout = MainLayout.class)
+@PageTitle("D2 | Sports")
+@Route(value = "D2", layout = MainLayout.class)
 @Slf4j
-public class ListViewI2 extends ListView {
+public class ListViewD2 extends ListView {
 
-    final static private String nameLeague = "Italy Serie B";
-    final private I_2Repository repository;
+    final static private String nameLeague = "Germany Bundesliga II";
+    final private D_2Repository repository;
     Pair<Date, Date> pair;
     List<String> teamNames;
 
@@ -37,7 +37,7 @@ public class ListViewI2 extends ListView {
     private ProbabilityGameCompute pgCompute = new ProbabilityGameCompute();
 
 
-    public ListViewI2(I_2Repository repository, DataService dataService) {
+    public ListViewD2(D_2Repository repository, DataService dataService) {
         super();
         this.repository = repository;
         addLeagueName();
