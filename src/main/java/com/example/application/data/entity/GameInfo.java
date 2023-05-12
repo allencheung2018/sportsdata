@@ -16,6 +16,6 @@ public class GameInfo {
         private String awayTeam;
         private Integer ftHomeGoal;
         private Integer ftAwayGoal;
-        private double ahCurrentHome;
-        private double ahHome;
+        private Double ahCurrentHome;
+        private Double ahHome;
 }
