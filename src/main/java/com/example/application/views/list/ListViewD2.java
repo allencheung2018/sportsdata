@@ -155,6 +155,7 @@ public class ListViewD2 extends ListView {
             pgCompute.setAwayWin(awayWinRate);
             pgCompute.setAwayWin1Ball(awayWin1BallRate);
             pgCompute.setAwayWin2Ball(awayWin2BallRate);
+            updateCompute(pgCompute);
         }
 
         return List.of(probabilityGame, probabilityPercentage);

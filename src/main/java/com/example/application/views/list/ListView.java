@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.application.data.entity.ProbabilityGame.AsianHandicap;
+import static com.example.application.data.entity.ProbabilityGame.*;
 import static com.example.application.data.entity.TeamInfo.nameColumns;
 
 
@@ -68,13 +68,17 @@ public abstract class ListView extends VerticalLayout {
     private TextField awayDrawChance = new TextField("概率");
     private TextField hostAway = new TextField("主客");
     private TextField hostAwayChance = new TextField("概率");
+    private HorizontalLayout probabilityCalculationLayout;
     protected Map<String, Pair<Date, Date>> dateSeason = new HashMap<>();
     private List<TeamInfo> mainDataList = null;
+    private ListViewE0.ProbabilityGameCompute compute = null;
 
     public ListView() {
         setWidthFull();
         configureDate();
         add(getEstimationArea());
+        probabilityCalculationLayout = probabilityCalculation();
+        add(probabilityCalculationLayout);
         probabilityGameGrid = getChanceGrid("probabilityGrid");
         add(probabilityGameGrid);
         add(getGameListLayout());
@@ -151,6 +155,10 @@ public abstract class ListView extends VerticalLayout {
             probabilityGameGrid.setItems(getProbabilityGameAH(Float.valueOf(comboBoxAH.getValue()), datePickerBegin.getValue(),
                     datePickerEnd.getValue()));
             updateChance(event.getValue());
+
+            HorizontalLayout temp = probabilityCalculation();
+            replace(probabilityCalculationLayout, temp);
+            probabilityCalculationLayout = temp;
         });
         buttonArea.setDefaultVerticalComponentAlignment(Alignment.END);
 
@@ -223,6 +231,31 @@ public abstract class ListView extends VerticalLayout {
 
         verticalLayout.add(buttonArea, verticalLayout1);
         return verticalLayout;
+    }
+
+    private HorizontalLayout probabilityCalculation() {
+        if (null == comboBoxAH.getValue()) {
+            return new HorizontalLayout();
+        }
+        float ah = Float.parseFloat(comboBoxAH.getValue());
+
+        VerticalLayout vL1= new VerticalLayout(new probabilityOddsLayout(HOST, "", compute),
+                new probabilityOddsLayout(AWAY, "", compute),
+                new probabilityOddsLayout(HOST_DRAW, "", compute),
+                new probabilityOddsLayout(HOST_AWAY, "", compute),
+                new probabilityOddsLayout(AWAY_DRAW, "", compute));
+        VerticalLayout vL2 = new VerticalLayout(new probabilityOddsLayout(HOST, String.valueOf(ah),compute),
+                new probabilityOddsLayout(HOST, String.valueOf(ah + 0.25),compute),
+                new probabilityOddsLayout(HOST, String.valueOf(ah + 0.5),compute),
+                new probabilityOddsLayout(HOST, String.valueOf(ah + 0.75),compute),
+                new probabilityOddsLayout(HOST, String.valueOf(ah + 1),compute));
+        VerticalLayout vL3 = new VerticalLayout(new probabilityOddsLayout(AWAY, String.valueOf(ah ==0 ? ah : -ah), compute),
+                new probabilityOddsLayout(AWAY, String.valueOf(-ah + 0.25), compute),
+                new probabilityOddsLayout(AWAY, String.valueOf(-ah + 0.5), compute),
+                new probabilityOddsLayout(AWAY, String.valueOf(-ah + 0.75), compute),
+                new probabilityOddsLayout(AWAY, String.valueOf(-ah + 1), compute));
+
+        return new HorizontalLayout(vL1, vL2, vL3);
     }
 
     private ComboBox<String> comboBoxTeams = new ComboBox("Team");
@@ -347,6 +380,10 @@ public abstract class ListView extends VerticalLayout {
         comboBoxAH.setValue(AsianHandicap.get(1));
     }
 
+    public void updateCompute(ListViewE0.ProbabilityGameCompute compute) {
+        this.compute = compute;
+    }
+
     public void updateProbabilityArea() {
 
     }
@@ -358,6 +395,25 @@ public abstract class ListView extends VerticalLayout {
         }
         againstGrid.setItems(searchAgainstTeams(comboBoxHome.getValue(), comboBoxAway.getValue(),
                 datePickerBegin.getValue(), datePickerEnd.getValue()));
+    }
+
+    public static class probabilityOddsLayout extends HorizontalLayout {
+        private Label oddsName = new Label();
+        private Label hostProbability = new Label();
+        private Label awayProbability = new Label();
+        public probabilityOddsLayout(String direction, String ahch, ListViewE0.ProbabilityGameCompute compute) {
+            Pair<String, String> pair = getProbabilityOfDirection(direction, ahch, compute);
+
+            oddsName.setText(direction + ahch);
+            oddsName.setWidth("12mm");
+            hostProbability.setText(pair.getFirst());
+            hostProbability.setWidth("12mm");
+            awayProbability.setText(pair.getSecond());
+            awayProbability.setWidth("12mm");
+            add(oddsName, hostProbability, awayProbability);
+            setDefaultVerticalComponentAlignment(Alignment.CENTER);
+            setMargin(false);
+        }
     }
 
     public abstract List<TeamInfo> searchAgainstTeams(Object home, Object away, LocalDate begin, LocalDate end);
