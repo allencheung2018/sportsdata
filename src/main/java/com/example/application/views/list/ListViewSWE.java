@@ -122,6 +122,10 @@ public class ListViewSWE extends ListView {
                 list.get(4), list.get(5), list.get(6), list.get(7));
         probabilityGame.setAh(String.valueOf(ah));
 
+        if (null == list.get(0) || list.get(0).equals("null")) {
+            return List.of(probabilityGame);
+        }
+
         float total = Float.parseFloat(probabilityGame.getTotalMatch());
         ProbabilityGame probabilityPercentage = new ProbabilityGame();
         float totalMatch = total / total;
