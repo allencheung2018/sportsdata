@@ -33,11 +33,13 @@ public class ProbabilityGame {
     public static final String HOST125 = "主1.25";
     public static final String HOST15 = "主1.5";
     public static final String HOST175 = "主1.75";
+    public static final String HOST20 = "主2.0";
+    public static final String HOST225 = "主2.25";
     public static final String AWAY = "客";
     public static final String AWAY_175 = "客-1.75";
     public static final String AWAY_15 = "客-1.5";
     public static final String AWAY_125 = "客-1.25";
-    public static final String AWAY_1 = "客-1";
+    public static final String AWAY_1 = "客-1.0";
     public static final String AWAY_075 = "客-0.75";
     public static final String AWAY_05 = "客-0.5";
     public static final String AWAY_025 = "客-0.25";
@@ -154,6 +156,19 @@ public class ProbabilityGame {
         } else if (HOST175.equals(direction + ah)) {
             chance = String.format("%.1f", (compute.getHostWin() + compute.getDraw() + compute.getAwayWin1Ball()) * 100);
             against = String.format("%.1f", (compute.getAwayWin() - compute.getAwayWin1Ball()) * 100);
+        } else if (HOST20.equals(direction + ah)) {
+            chance = String.format("%.1f", (compute.getHostWin() + compute.getDraw() + compute.getAwayWin1Ball()) * 100);
+            against = String.format("%.1f", (compute.getAwayWin() - compute.getAwayWin1Ball() - compute.getAwayWin2Ball()) * 100);
+        } else if (HOST225.equals(direction + ah)) {
+            chance = String.format("%.1f", (compute.getHostWin() + compute.getDraw()
+                    + compute.getAwayWin1Ball() + compute.getAwayWin2Ball()) * 100);
+            against = String.format("%.1f", (compute.getAwayWin() - compute.getAwayWin1Ball() - compute.getAwayWin2Ball()) * 100);
+        } else if (AWAY_1.equals(direction + ah)) {
+            chance = String.format("%.1f", (compute.getAwayWin() - compute.getAwayWin1Ball()) * 100);
+            against = String.format("%.1f", (compute.getHostWin() + compute.getDraw()) * 100);
+        } else if (AWAY_125.equals(direction + ah)) {
+            chance = String.format("%.1f", (compute.getAwayWin() - compute.getAwayWin1Ball()) * 100);
+            against = String.format("%.1f", (compute.getHostWin() + compute.getDraw() + compute.getAwayWin1Ball()) * 100);
         } else if (AWAY_075.equals(direction + ah)) {
             chance = String.format("%.1f", (compute.getAwayWin()) * 100);
             against = String.format("%.1f", (compute.getHostWin() + compute.getDraw()) * 100);
