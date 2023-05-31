@@ -48,7 +48,7 @@ public abstract class League implements Serializable {
 
     @Getter
     @Embeddable
-    public static class PrimaryInfo {
+    public static class PrimaryInfo implements Serializable{
         private String div;
         private Date date;
         private String homeTeam;
