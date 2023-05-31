@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 @PageTitle("E0 | Sports")
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "E0", layout = MainLayout.class)
 @Slf4j
 public class ListViewE0 extends ListView {
 
