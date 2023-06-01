@@ -1,23 +1,30 @@
 package com.example.application.views.list;
 
-import com.example.application.data.entity.GameInfo;
-import com.example.application.data.entity.RecordAH;
+import com.example.application.data.entity.RecordInfo;
 import com.example.application.data.repository.RecordAHRepository;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.FooterRow;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.example.application.data.entity.ProbabilityGame.AsianHandicap;
+import static com.example.application.data.entity.RecordInfo.nameColumns;
 
 @PageTitle("RecordAH")
 @Route(value = "", layout = MainLayout.class)
@@ -28,10 +35,11 @@ public class RecordAHLayout extends VerticalLayout {
     private DatePicker datePickerBegin = new DatePicker("Begin");
     private DatePicker datePickerEnd = new DatePicker("End");
     private ComboBox<String> comboBoxAH = new ComboBox("AHCh");
+    private Grid<RecordInfo> recordInfoGrid;
 
     public RecordAHLayout(RecordAHRepository repository) {
         this.repository = repository;
-        setWidthFull();
+        setSizeFull();
         addDateAndOdds();
 
         comboBoxAH.setValue(AsianHandicap.get(1));
@@ -40,22 +48,137 @@ public class RecordAHLayout extends VerticalLayout {
     private void addDateAndOdds() {
         datePickerBegin.setValue(LocalDate.parse("2023-01-01"));
         datePickerEnd.setValue(LocalDate.now());
-        comboBoxAH.setItems(AsianHandicap);
+        Collection<String> collection = new ArrayList<>();
+        collection.addAll(AsianHandicap);
+        collection.add("All");
+        comboBoxAH.setItems(collection);
         HorizontalLayout horizontalLayout = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH);
 
         Label hostDwon3 = new Label();
+        Label countHD3 = new Label();
         Label hostDwon2 = new Label();
-        HorizontalLayout hostLayout = new HorizontalLayout(hostDwon3, hostDwon2);
+        Label countHD2 = new Label();
+        HorizontalLayout hostLayout = new HorizontalLayout(hostDwon3, countHD3, hostDwon2, countHD2);
         Label awayDown3 = new Label();
+        Label countAD3 = new Label();
         Label awayDown2 = new Label();
-        HorizontalLayout awayLayout = new HorizontalLayout(awayDown3, awayDown2);
+        Label countAD2 = new Label();
+        HorizontalLayout awayLayout = new HorizontalLayout(awayDown3, countAD3, awayDown2, countAD2);
+
+        recordInfoGrid = createRecordInfoGrid("RecordGrid");
+        FooterRow footer = recordInfoGrid.prependFooterRow();
+        FooterRow.FooterCell footerCellCost = footer.getCell(recordInfoGrid.getColumnByKey("date"));
 
         comboBoxAH.addValueChangeListener(event -> {
-            List<GameInfo> list = repository.getRecordByAh(Float.valueOf(comboBoxAH.getValue()),
-                    Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
-            log.info("count = " + list.size());
+            List<RecordInfo> list = null;
+            float ah = 0;
+            if (comboBoxAH.getValue().equals("All")) {
+                list = repository.getRecordByDate(Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+            } else {
+                ah = Float.valueOf(comboBoxAH.getValue());
+                list = repository.getRecordByAh(ah, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+            }
+            recordInfoGrid.setItems(list);
+            footerCellCost.setText("Rows : " + list.size());
+            ProfitEstimationAH profit = getProfit(list, ah, "Host-3");
+            hostDwon3.setText("主降3= " + String.format("%.1f", profit.getProfit()));
+            hostDwon3.setWidth("25mm");
+            countHD3.setText("W= "+profit.getWin() + " hW="+profit.hWin + " d="+profit.getDraw()
+                    + " hL="+profit.getHLose() + " L="+profit.getLose());
+            countHD3.setWidth("60mm");
+            profit = getProfit(list, ah, "Host-2");
+            hostDwon2.setText("主降2= " + String.format("%.1f", profit.getProfit()));
+            hostDwon2.setWidth("25mm");
+            countHD2.setText("W= "+profit.getWin()
+                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+            countHD2.setWidth("60mm");
+            profit = getProfit(list, ah, "Away-3");
+            awayDown3.setText("客降3= " + String.format("%.1f", profit.getProfit()));
+            awayDown3.setWidth("25mm");
+            countAD3.setText("W= "+profit.getWin()
+                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+            countAD3.setWidth("60mm");
+            profit = getProfit(list, ah, "Away-2");
+            awayDown2.setText("客降2= " + String.format("%.1f", profit.getProfit()));
+            awayDown2.setWidth("25mm");
+            countAD2.setText("W= "+profit.getWin()
+                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+            countAD2.setWidth("60mm");
         });
-
         add(horizontalLayout, hostLayout, awayLayout);
+        VerticalLayout verticalLayout = new VerticalLayout(recordInfoGrid);
+        verticalLayout.setHeightFull();
+        add(verticalLayout);
+    }
+
+    private Grid<RecordInfo> createRecordInfoGrid(String name) {
+        Grid<RecordInfo> grid = new Grid<>(RecordInfo.class);
+        grid.addClassName(name);
+        grid.setHeightFull();
+        grid.setColumns(nameColumns);
+        grid.getColumnByKey("homeGoal").setHeader("HG").setAutoWidth(true);
+        grid.getColumnByKey("awayGoal").setHeader("AG").setAutoWidth(true);
+
+        return grid;
+    }
+
+    private ProfitEstimationAH getProfit(List<RecordInfo> records, float ah, String direction) {
+        float downAH = 0;
+        int win = 0;
+        int hWin = 0;
+        int draw = 0;
+        int hLose = 0;
+        int lose = 0;
+        float profit = 0;
+        float diff = 0;
+
+        for (int i=0; i< records.size(); i++) {
+            RecordInfo record = records.get(i);
+            if (direction.equals("Host-3")) {
+                downAH = ah + 3 * 0.25f;
+                diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+            } else if (direction.equals("Host-2")) {
+                downAH = ah + 2 * 0.25f;
+                diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+            } else if (direction.equals("Away-3")) {
+                downAH = -ah + 3 * 0.25f;
+                diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+
+            } else if (direction.equals("Away-2")) {
+                downAH = -ah + 2 * 0.25f;
+                diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+            } else {
+                profit += record.getProfit();
+            }
+            if (diff > 0.25) {
+                win += 1;
+            } else if (diff == 0.25) {
+                hWin += 1;
+            } else if (diff == 0) {
+                draw += 1;
+            } else if (diff == -0.25) {
+                hLose += 1;
+            } else if (diff < -0.25) {
+                lose += 1;
+            }
+        }
+        if (direction.equals("Host-3") || direction.equals("Away-3")) {
+            profit = 0.35f * win + 0.175f * hWin - 0.5f * hLose - lose;
+        } else if (direction.equals("Host-2") || direction.equals("Away-2")) {
+            profit = 0.5f * win + 0.25f * hWin - 0.5f * hLose - lose;
+        }
+        return new ProfitEstimationAH(win, hWin, draw, hLose, lose, profit);
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    private static class ProfitEstimationAH {
+        private int win;
+        private int hWin;
+        private int draw;
+        private int hLose;
+        private int lose;
+        private float profit;
     }
 }

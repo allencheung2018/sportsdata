@@ -32,6 +32,15 @@ public class RecordAH implements Serializable {
     @Column(name = "AH")
     private Float ah;
 
+    @Column(name = "BetAH")
+    private Float ahBet;
+
     @Column(name = "HomeTeam")
     private String homeTeam;
+
+    @Column(name = "Direction")
+    private String direction;
+
+    @Column(name = "Profit")
+    private Float profit;
 }
