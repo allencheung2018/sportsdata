@@ -1,6 +1,7 @@
 package com.example.application.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +15,18 @@ import java.sql.Date;
 public class RecordAH implements Serializable {
     @Id
     @Column(name = "ID")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "Date")
     private Date gameDate;
 
-    @Column(name = "Match")
-    private String match;
+    @Column(name = "BetDate")
+    private Date betDate;
+
+    @NotNull
+    @Column(name = "League")
+    private String league;
 
     @Column(name = "FTHG")
     private Integer hostGoal;
@@ -43,4 +48,10 @@ public class RecordAH implements Serializable {
 
     @Column(name = "Profit")
     private Float profit;
+
+    @Column(name = "GL")
+    private Float goalLine;
+
+    @Column(name = "BetGL")
+    private Float betGL;
 }

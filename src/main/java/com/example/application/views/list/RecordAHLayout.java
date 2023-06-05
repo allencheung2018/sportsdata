@@ -3,6 +3,7 @@ package com.example.application.views.list;
 import com.example.application.data.entity.RecordInfo;
 import com.example.application.data.repository.RecordAHRepository;
 import com.example.application.views.MainLayout;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.FooterRow;
@@ -36,90 +37,151 @@ public class RecordAHLayout extends VerticalLayout {
     private DatePicker datePickerEnd = new DatePicker("End");
     private ComboBox<String> comboBoxAH = new ComboBox("AHCh");
     private Grid<RecordInfo> recordInfoGrid;
+    private RecordForm form;
 
     public RecordAHLayout(RecordAHRepository repository) {
         this.repository = repository;
         setSizeFull();
+        configureForm();
         addDateAndOdds();
 
         comboBoxAH.setValue(AsianHandicap.get(1));
+        closeEditor();
     }
+
+    private Label hostDwon3 = new Label();
+    private Label countHD3 = new Label();
+    private Label hostDwon2 = new Label();
+    private Label countHD2 = new Label();
+    private Label awayDown3 = new Label();
+    private Label countAD3 = new Label();
+    private Label awayDown2 = new Label();
+    private Label countAD2 = new Label();
+    private FooterRow.FooterCell footerCellCost;
 
     private void addDateAndOdds() {
         datePickerBegin.setValue(LocalDate.parse("2023-01-01"));
+        datePickerBegin.setWidth("40mm");
+        datePickerBegin.addValueChangeListener(event -> updateData());
         datePickerEnd.setValue(LocalDate.now());
+        datePickerEnd.setWidth("40mm");
+        datePickerEnd.addValueChangeListener(event -> updateData());
+
         Collection<String> collection = new ArrayList<>();
         collection.addAll(AsianHandicap);
         collection.add("All");
         comboBoxAH.setItems(collection);
-        HorizontalLayout horizontalLayout = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH);
+        comboBoxAH.setWidth("30mm");
+        Button newButton = new Button("New");
+        newButton.setWidth("20mm");
+        newButton.addClickListener(event -> addRecord());
+        HorizontalLayout horizontalLayout = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH, newButton);
+        horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
 
-        Label hostDwon3 = new Label();
-        Label countHD3 = new Label();
-        Label hostDwon2 = new Label();
-        Label countHD2 = new Label();
         HorizontalLayout hostLayout = new HorizontalLayout(hostDwon3, countHD3, hostDwon2, countHD2);
-        Label awayDown3 = new Label();
-        Label countAD3 = new Label();
-        Label awayDown2 = new Label();
-        Label countAD2 = new Label();
         HorizontalLayout awayLayout = new HorizontalLayout(awayDown3, countAD3, awayDown2, countAD2);
 
         recordInfoGrid = createRecordInfoGrid("RecordGrid");
         FooterRow footer = recordInfoGrid.prependFooterRow();
-        FooterRow.FooterCell footerCellCost = footer.getCell(recordInfoGrid.getColumnByKey("date"));
+        footerCellCost = footer.getCell(recordInfoGrid.getColumnByKey("matchDate"));
 
         comboBoxAH.addValueChangeListener(event -> {
-            List<RecordInfo> list = null;
-            float ah = 0;
-            if (comboBoxAH.getValue().equals("All")) {
-                list = repository.getRecordByDate(Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
-            } else {
-                ah = Float.valueOf(comboBoxAH.getValue());
-                list = repository.getRecordByAh(ah, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
-            }
-            recordInfoGrid.setItems(list);
-            footerCellCost.setText("Rows : " + list.size());
-            ProfitEstimationAH profit = getProfit(list, ah, "Host-3");
-            hostDwon3.setText("主降3= " + String.format("%.1f", profit.getProfit()));
-            hostDwon3.setWidth("25mm");
-            countHD3.setText("W= "+profit.getWin() + " hW="+profit.hWin + " d="+profit.getDraw()
-                    + " hL="+profit.getHLose() + " L="+profit.getLose());
-            countHD3.setWidth("60mm");
-            profit = getProfit(list, ah, "Host-2");
-            hostDwon2.setText("主降2= " + String.format("%.1f", profit.getProfit()));
-            hostDwon2.setWidth("25mm");
-            countHD2.setText("W= "+profit.getWin()
-                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
-            countHD2.setWidth("60mm");
-            profit = getProfit(list, ah, "Away-3");
-            awayDown3.setText("客降3= " + String.format("%.1f", profit.getProfit()));
-            awayDown3.setWidth("25mm");
-            countAD3.setText("W= "+profit.getWin()
-                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
-            countAD3.setWidth("60mm");
-            profit = getProfit(list, ah, "Away-2");
-            awayDown2.setText("客降2= " + String.format("%.1f", profit.getProfit()));
-            awayDown2.setWidth("25mm");
-            countAD2.setText("W= "+profit.getWin()
-                    + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
-            countAD2.setWidth("60mm");
+            updateData();
         });
         add(horizontalLayout, hostLayout, awayLayout);
-        VerticalLayout verticalLayout = new VerticalLayout(recordInfoGrid);
-        verticalLayout.setHeightFull();
-        add(verticalLayout);
+
+        HorizontalLayout content = new HorizontalLayout(recordInfoGrid, form);
+        content.setFlexGrow(4, recordInfoGrid);
+        content.setFlexGrow(1, form);
+        content.addClassName("content");
+        content.setSizeFull();
+        add(content);
+    }
+
+    private void updateData() {
+        List<RecordInfo> list = null;
+        float ah = 0;
+        if (comboBoxAH.getValue().equals("All")) {
+            list = repository.getRecordByDate(Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+            ah = 0;
+        } else {
+            ah = Float.valueOf(comboBoxAH.getValue());
+            list = repository.getRecordByAh(ah, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+        }
+        recordInfoGrid.setItems(list);
+        footerCellCost.setText("Rows : " + list.size());
+        ProfitEstimationAH profit = getProfit(list, ah, "Host-3");
+        hostDwon3.setText("主降3= " + String.format("%.1f", profit.getProfit()));
+        hostDwon3.setWidth("25mm");
+        countHD3.setText("W= "+profit.getWin() + " hW="+profit.hWin + " d="+profit.getDraw()
+                + " hL="+profit.getHLose() + " L="+profit.getLose());
+        countHD3.setWidth("60mm");
+        profit = getProfit(list, ah, "Host-2");
+        hostDwon2.setText("主降2= " + String.format("%.1f", profit.getProfit()));
+        hostDwon2.setWidth("25mm");
+        countHD2.setText("W= "+profit.getWin()
+                + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+        countHD2.setWidth("60mm");
+        profit = getProfit(list, ah, "Away-3");
+        awayDown3.setText("客降3= " + String.format("%.1f", profit.getProfit()));
+        awayDown3.setWidth("25mm");
+        countAD3.setText("W= "+profit.getWin()
+                + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+        countAD3.setWidth("60mm");
+        profit = getProfit(list, ah, "Away-2");
+        awayDown2.setText("客降2= " + String.format("%.1f", profit.getProfit()));
+        awayDown2.setWidth("25mm");
+        countAD2.setText("W= "+profit.getWin()
+                + " hW="+profit.hWin + " d="+profit.getDraw() + " hL="+profit.getHLose() + " L="+profit.getLose());
+        countAD2.setWidth("60mm");
     }
 
     private Grid<RecordInfo> createRecordInfoGrid(String name) {
         Grid<RecordInfo> grid = new Grid<>(RecordInfo.class);
         grid.addClassName(name);
-        grid.setHeightFull();
+//        grid.setHeightFull();
+        grid.setSizeFull();
         grid.setColumns(nameColumns);
         grid.getColumnByKey("homeGoal").setHeader("HG").setAutoWidth(true);
         grid.getColumnByKey("awayGoal").setHeader("AG").setAutoWidth(true);
 
+        grid.asSingleSelect().addValueChangeListener(event -> editRecord(event.getValue()));
+
         return grid;
+    }
+
+    private void configureForm() {
+        form = new RecordForm();
+//        form.setWidth("30mm");
+        form.addSaveListener(this::saveRecord);
+        form.addCloseEvnet(e -> closeEditor());
+    }
+
+    private void editRecord(RecordInfo recordInfo) {
+        if (recordInfo == null) {
+            closeEditor();
+        } else {
+            form.setRecordInfo(recordInfo);
+            form.setVisible(true);
+            addClassName("editing");
+        }
+    }
+
+    private void saveRecord(RecordForm.SaveEvent event) {
+        repository.save(event.getRecordAH());
+        closeEditor();
+        updateData();
+    }
+
+    private void closeEditor() {
+        form.setRecordInfo(null);
+        form.setVisible(false);
+        removeClassName("editing");
+    }
+
+    private void addRecord() {
+        recordInfoGrid.asSingleSelect().clear();
+        editRecord(new RecordInfo(LocalDate.now(), LocalDate.now()));
     }
 
     private ProfitEstimationAH getProfit(List<RecordInfo> records, float ah, String direction) {
@@ -135,21 +197,30 @@ public class RecordAHLayout extends VerticalLayout {
         for (int i=0; i< records.size(); i++) {
             RecordInfo record = records.get(i);
             if (direction.equals("Host-3")) {
-                downAH = ah + 3 * 0.25f;
-                diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = ah + 3 * 0.25f;
+                    diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+                }
             } else if (direction.equals("Host-2")) {
-                downAH = ah + 2 * 0.25f;
-                diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = ah + 2 * 0.25f;
+                    diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+                }
             } else if (direction.equals("Away-3")) {
-                downAH = -ah + 3 * 0.25f;
-                diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = -ah + 3 * 0.25f;
+                    diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+                }
 
             } else if (direction.equals("Away-2")) {
-                downAH = -ah + 2 * 0.25f;
-                diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = -ah + 2 * 0.25f;
+                    diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
+                }
             } else {
                 profit += record.getProfit();
             }
+
             if (diff > 0.25) {
                 win += 1;
             } else if (diff == 0.25) {

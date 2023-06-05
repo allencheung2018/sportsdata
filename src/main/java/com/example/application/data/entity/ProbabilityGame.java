@@ -14,6 +14,9 @@ public class ProbabilityGame {
 
     public static List<String> AsianHandicap = Arrays.asList("0", "-0.25", "0.25", "-0.5", "0.5", "-0.75", "0.75",
             "-1", "1", "-1.25", "1.25", "-1.5", "1.5", "-1.75", "1.75", "-2", "2", "-2.25", "2.25", "-2.5", "2.5");
+    public static List<String> GoalLine = Arrays.asList("1", "1.25", "1.5", "1.75", "2", "2.25", "2.5", "2.75", "3",
+            "3.25", "3.5", "3.75", "4", "4.25", "4.5", "4.75", "5");
+
     public static final String HOST = "主";
     public static final String HOST_DRAW = "主+平";
     public static final String HOST_AWAY = "主+客";
