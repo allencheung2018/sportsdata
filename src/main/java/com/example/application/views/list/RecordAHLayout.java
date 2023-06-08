@@ -144,6 +144,7 @@ public class RecordAHLayout extends VerticalLayout {
         grid.setColumns(nameColumns);
         grid.getColumnByKey("homeGoal").setHeader("HG").setAutoWidth(true);
         grid.getColumnByKey("awayGoal").setHeader("AG").setAutoWidth(true);
+        grid.getColumnByKey("goalLine").setHeader("GL").setAutoWidth(true);
 
         grid.asSingleSelect().addValueChangeListener(event -> editRecord(event.getValue()));
 
