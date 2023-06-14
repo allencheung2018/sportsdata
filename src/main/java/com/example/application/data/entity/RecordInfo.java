@@ -29,6 +29,9 @@ public class RecordInfo {
         betDate = Date.valueOf(date);
     }
     public LocalDate getBetDate() {
+        if (null == betDate) {
+            betDate = matchDate;
+        }
         return betDate.toLocalDate();
     }
 

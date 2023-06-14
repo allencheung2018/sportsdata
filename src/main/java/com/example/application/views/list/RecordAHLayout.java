@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.example.application.data.entity.ProbabilityGame.AsianHandicap;
+import static com.example.application.data.entity.ProbabilityGame.GoalLine;
 import static com.example.application.data.entity.RecordInfo.nameColumns;
 
 @PageTitle("RecordAH")
@@ -32,10 +33,12 @@ import static com.example.application.data.entity.RecordInfo.nameColumns;
 @Slf4j
 public class RecordAHLayout extends VerticalLayout {
 
+    public static final String ALL = "All";
     private final RecordAHRepository repository;
     private DatePicker datePickerBegin = new DatePicker("Begin");
     private DatePicker datePickerEnd = new DatePicker("End");
     private ComboBox<String> comboBoxAH = new ComboBox("AHCh");
+    private ComboBox<String> comboBoxGL = new ComboBox("GL");
     private Grid<RecordInfo> recordInfoGrid;
     private RecordForm form;
 
@@ -77,13 +80,18 @@ public class RecordAHLayout extends VerticalLayout {
 
         Collection<String> collection = new ArrayList<>();
         collection.addAll(AsianHandicap);
-        collection.add("All");
+        collection.add(ALL);
         comboBoxAH.setItems(collection);
         comboBoxAH.setWidth("30mm");
+        Collection<String> gls = new ArrayList<>();
+        gls.addAll(GoalLine);
+        gls.add(ALL);
+        comboBoxGL.setItems(gls);
+        comboBoxGL.setWidth("30mm");
         Button newButton = new Button("New");
         newButton.setWidth("20mm");
         newButton.addClickListener(event -> addRecord());
-        HorizontalLayout horizontalLayout = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH, newButton);
+        HorizontalLayout horizontalLayout = new HorizontalLayout(datePickerBegin, datePickerEnd, comboBoxAH, comboBoxGL, newButton);
         horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
 
         HorizontalLayout hostLayout = new HorizontalLayout(hostDwon3, countHD3, hostDwon2, countHD2, goalOver2, countGO2, goalOver15, countGO15);
@@ -94,8 +102,12 @@ public class RecordAHLayout extends VerticalLayout {
         footerCellCost = footer.getCell(recordInfoGrid.getColumnByKey("matchDate"));
 
         comboBoxAH.addValueChangeListener(event -> {
+            if (null == comboBoxGL.getValue()) {
+                comboBoxGL.setValue(ALL);
+            }
             updateData();
         });
+        comboBoxGL.addValueChangeListener(event -> updateData());
         add(horizontalLayout, hostLayout, awayLayout);
 
         HorizontalLayout content = new HorizontalLayout(recordInfoGrid, form);
@@ -107,14 +119,22 @@ public class RecordAHLayout extends VerticalLayout {
     }
 
     private void updateData() {
-        List<RecordInfo> list = null;
+        List<RecordInfo> list;
         float ah = 0;
-        if (comboBoxAH.getValue().equals("All")) {
+        float gl = 0;
+        if (comboBoxAH.getValue().equals(ALL) && comboBoxGL.getValue().equals(ALL)) {
             list = repository.getRecordByDate(Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
             ah = 0;
-        } else {
+        } else if (comboBoxAH.getValue().equals(ALL)) {
+            gl = Float.parseFloat(comboBoxGL.getValue());
+            list = repository.getRecordByGL(gl, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+        } else if (comboBoxGL.getValue().equals(ALL)) {
             ah = Float.valueOf(comboBoxAH.getValue());
             list = repository.getRecordByAh(ah, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
+        } else {
+            ah = Float.valueOf(comboBoxAH.getValue());
+            gl = Float.parseFloat(comboBoxGL.getValue());
+            list = repository.getRecordByAhAndGL(ah, gl, Date.valueOf(datePickerBegin.getValue()), Date.valueOf(datePickerEnd.getValue()));
         }
         recordInfoGrid.setItems(list);
         footerCellCost.setText("Rows : " + list.size());
@@ -143,26 +163,26 @@ public class RecordAHLayout extends VerticalLayout {
                 + " HW="+profit.hWin + " P="+profit.getDraw() + " HL="+profit.getHLose() + " L="+profit.getLose());
         countAD2.setWidth("60mm");
 
-        profit = getGoalLineEstimation(list, 2f, "GO2");
-        goalOver2.setText("大2= " + String.format("%.1f", profit.getProfit()));
+        profit = getGoalLineEstimation(list, gl - 3 * 0.25f, "GO-3");
+        goalOver2.setText("大-3= " + String.format("%.1f", profit.getProfit()));
         goalOver2.setWidth("25mm");
         countGO2.setText("W="+profit.getWin() + " HW="+profit.getHWin() + " P="+profit.getDraw()
                 + " HL="+profit.getHLose() + " L="+profit.getLose());
         countGO2.setWidth("60mm");
-        profit = getGoalLineEstimation(list, 1.5f, "GO15");
-        goalOver15.setText("大1.5= " + String.format("%.1f", profit.getProfit()));
+        profit = getGoalLineEstimation(list, gl - 2 * 0.25f, "GO-2");
+        goalOver15.setText("大-2= " + String.format("%.1f", profit.getProfit()));
         goalOver15.setWidth("25mm");
         countGO15.setText("W="+profit.getWin() + " HW="+profit.getHWin() + " P="+profit.getDraw()
                 + " HL="+profit.getHLose() + " L="+profit.getLose());
         countGO15.setWidth("60mm");
-        profit = getGoalLineEstimation(list, 3f, "GU3");
-        goalUnder3.setText("小3= " + String.format("%.1f", profit.getProfit()));
+        profit = getGoalLineEstimation(list, gl + 3 * 0.25f, "GU-3");
+        goalUnder3.setText("小-3= " + String.format("%.1f", profit.getProfit()));
         goalUnder3.setWidth("25mm");
         countGU3.setText("W="+profit.getWin() + " HW="+profit.getHWin() + " P="+profit.getDraw()
                 + " HL="+profit.getHLose() + " L="+profit.getLose());
         countGU3.setWidth("60mm");
-        profit = getGoalLineEstimation(list, 3.5f, "GU35");
-        goalUnder35.setText("小3.5= " + String.format("%.1f", profit.getProfit()));
+        profit = getGoalLineEstimation(list, gl + 2 * 0.25f, "GU-2");
+        goalUnder35.setText("小-2= " + String.format("%.1f", profit.getProfit()));
         goalUnder35.setWidth("25mm");
         countGU35.setText("W="+profit.getWin() + " HW="+profit.getHWin() + " P="+profit.getDraw()
                 + " HL="+profit.getHLose() + " L="+profit.getLose());
@@ -282,57 +302,48 @@ public class RecordAHLayout extends VerticalLayout {
         int hLose = 0;
         int lose = 0;
         float profit = 0;
-        float gaol;
+        float goal;
+        float diff = 0;
 
         for (int i=0; i< records.size(); i++) {
             RecordInfo record = records.get(i);
-            if (direction.equals("GO2")) {
+            if (direction.equals("GO-3")) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
-                    gaol = record.getHomeGoal() + record.getAwayGoal();
-                    if (gaol > goalLine) {
-                        win += 1;
-                    } else if (gaol == goalLine) {
-                        draw += 1;
-                    } else if (gaol < goalLine) {
-                        lose += 1;
-                    }
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goal - goalLine;
                 }
-            } else if (direction.equals("GU3")) {
+            } else if (direction.equals("GU-3")) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
-                    gaol = record.getHomeGoal() + record.getAwayGoal();
-                    if (gaol < goalLine) {
-                        win += 1;
-                    } else if (gaol == goalLine) {
-                        draw += 1;
-                    } else if (gaol > goalLine) {
-                        lose += 1;
-                    }
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goalLine - goal;
                 }
-            } else if (direction.equals("GO15")) {
+            } else if (direction.equals("GO-2")) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
-                    gaol = record.getHomeGoal() + record.getAwayGoal();
-                    if (gaol > goalLine) {
-                        win += 1;
-                    } else if (gaol < goalLine) {
-                        lose += 1;
-                    }
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goal - goalLine;
                 }
-
-            } else if (direction.equals("GU35")) {
+            } else if (direction.equals("GU-2")) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
-                    gaol = record.getHomeGoal() + record.getAwayGoal();
-                    if (gaol < goalLine) {
-                        win += 1;
-                    } else if (gaol > goalLine) {
-                        lose += 1;
-                    }
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goalLine - goal;
                 }
             }
+            if (diff > 0.25) {
+                win += 1;
+            } else if (diff == 0.25) {
+                hWin += 1;
+            } else if (diff == 0) {
+                draw += 1;
+            } else if (diff == -0.25) {
+                hLose += 1;
+            } else if (diff < -0.25) {
+                lose += 1;
+            }
         }
-        if (direction.equals("GO2") || direction.equals("GO15")) {
-            profit = 0.35f * win - lose;
-        } else if (direction.equals("GU3") || direction.equals("GU35")) {
-            profit = 0.35f * win - lose;
+        if (direction.equals("GO-3") || direction.equals("GU-3")) {
+            profit = 0.35f * win + 0.175f * hWin - 0.5f * hLose - lose;
+        } else if (direction.equals("GO-2") || direction.equals("GU-2")) {
+            profit = 0.5f * win + 0.25f * hWin - 0.5f * hLose - lose;
         }
         return new ProfitEstimationAH(win, hWin, draw, hLose, lose, profit);
     }
