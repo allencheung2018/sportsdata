@@ -38,6 +38,7 @@ public class RecordForm extends FormLayout {
     private ComboBox<String> goalLine = new ComboBox<>("GoalLine");
     private ComboBox<String> betGL = new ComboBox<>("BetGL");
     private Button save = new Button("Save");
+    private Button delete = new Button("Delete");
     private Button cancel = new Button("Cancel");
     private Binder<RecordInfo> binder = new BeanValidationBinder<>(RecordInfo.class);
 
@@ -77,17 +78,19 @@ public class RecordForm extends FormLayout {
 
     private HorizontalLayout createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         save.addClickShortcut(Key.ENTER);
         cancel.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> validateAndSave());
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
         cancel.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
 
-        return new HorizontalLayout(save, cancel);
+        return new HorizontalLayout(save, delete, cancel);
     }
 
     private void validateAndSave() {
@@ -143,8 +146,18 @@ public class RecordForm extends FormLayout {
         }
     }
 
+    public static class DeleteEvent extends RecordFormEvent {
+        DeleteEvent(RecordForm source, RecordInfo recordInfo) {
+            super(source, recordInfo);
+        }
+    }
+
     public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
         return addListener(SaveEvent.class, listener);
+    }
+
+    public Registration addDeletedListener(ComponentEventListener<DeleteEvent> listener) {
+        return addListener(DeleteEvent.class, listener);
     }
 
     public Registration addCloseEvnet(ComponentEventListener<CloseEvent> listener) {

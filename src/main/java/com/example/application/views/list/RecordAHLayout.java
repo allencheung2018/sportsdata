@@ -265,6 +265,7 @@ public class RecordAHLayout extends VerticalLayout {
         form = new RecordForm();
 //        form.setWidth("30mm");
         form.addSaveListener(this::saveRecord);
+        form.addDeletedListener(this::deleteRecord);
         form.addCloseEvnet(e -> closeEditor());
     }
 
@@ -280,6 +281,12 @@ public class RecordAHLayout extends VerticalLayout {
 
     private void saveRecord(RecordForm.SaveEvent event) {
         repository.save(event.getRecordAH());
+        closeEditor();
+        updateData();
+    }
+
+    private void deleteRecord(RecordForm.DeleteEvent event) {
+        repository.delete(event.getRecordAH());
         closeEditor();
         updateData();
     }
