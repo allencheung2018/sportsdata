@@ -29,6 +29,7 @@ public class RecordForm extends FormLayout {
     private DatePicker betDate = new DatePicker(LocalDate.now());
     private TextField league = new TextField("League");
     private TextField profit = new TextField("Profit");
+    private TextField pfGoal = new TextField("PfGoal");
     private TextField homeTeam = new TextField("HomeTeam");
     private TextField homeGoal = new TextField("HG");
     private TextField direction = new TextField("Direction");
@@ -55,21 +56,23 @@ public class RecordForm extends FormLayout {
 
         matchDate.setWidth("35mm");
         betDate.setWidth("35mm");
+        league.setWidth("30mm");
         homeTeam.setWidth("40mm");
-        profit.setWidth("30mm");
-        league.setWidth("22mm");
-        homeGoal.setWidth("22mm");
-        awayGoal.setWidth("22mm");
-        direction.setWidth("22mm");
-        ah.setWidth("22mm");
-        ahBet.setWidth("22mm");
+        profit.setWidth("35mm");
+        pfGoal.setWidth("35mm");
+        direction.setWidth("42mm");
+        homeGoal.setWidth("12mm");
+        awayGoal.setWidth("12mm");
+        ah.setWidth("35mm");
+        ahBet.setWidth("35mm");
         goalLine.setWidth("35mm");
         betGL.setWidth("35mm");
         VerticalLayout layout = new VerticalLayout(
                 new HorizontalLayout(matchDate, betDate),
-                new HorizontalLayout(homeTeam, profit),
-                new HorizontalLayout(league, homeGoal, awayGoal),
-                new HorizontalLayout(direction, ah, ahBet),
+                new HorizontalLayout(league, homeTeam),
+                new HorizontalLayout(profit, pfGoal),
+                new HorizontalLayout(direction, homeGoal, awayGoal),
+                new HorizontalLayout(ah, ahBet),
                 new HorizontalLayout(goalLine, betGL),
                 createButtonsLayout());
         layout.setSizeFull();
@@ -128,6 +131,7 @@ public class RecordForm extends FormLayout {
             recordAH.setAhBet(recordInfo.getAhBet());
             recordAH.setDirection(recordInfo.getDirection());
             recordAH.setProfit(recordInfo.getProfit());
+            recordAH.setPfGoal(recordInfo.getPfGoal());
             recordAH.setGoalLine(recordInfo.getGoalLine());
             recordAH.setBetGL(recordInfo.getBetGL());
             return recordAH;

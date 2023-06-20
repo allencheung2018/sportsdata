@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class RecordInfo {
 
     public static final String[] nameColumns = {"matchDate", "league", "homeTeam", "homeGoal", "awayGoal", "ah",
-            "ahBet", "goalLine", "direction",  "profit"};
+            "ahBet", "goalLine", "direction",  "profit", "pfGoal"};
 
     private Long id;
     private Date matchDate;
@@ -42,6 +42,7 @@ public class RecordInfo {
     private Float ah;
     private Float ahBet;
     private Float profit;
+    private Float pfGoal;
     private String direction;
     private Float goalLine;
     private Float betGL;

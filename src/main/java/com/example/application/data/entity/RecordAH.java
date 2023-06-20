@@ -49,6 +49,9 @@ public class RecordAH implements Serializable {
     @Column(name = "Profit")
     private Float profit;
 
+    @Column(name = "PfGoal")
+    private Float pfGoal;
+
     @Column(name = "GL")
     private Float goalLine;
 
