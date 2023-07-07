@@ -40,18 +40,22 @@ public class RecordAHLayout extends VerticalLayout {
     public static final String H_2 = "H-2";
     public static final String H_1 = "H-1";
     public static final String H_0 = "H-0";
+    public static final String H1 = "H+1";
     public static final String A_3 = "A-3";
     public static final String A_2 = "A-2";
     public static final String A_1 = "A-1";
     public static final String A_0 = "A-0";
+    public static final String A1 = "A+1";
     public static final String O_3 = "O-3";
     public static final String O_2 = "O-2";
     public static final String O_1 = "O-1";
     public static final String O_0 = "O-0";
+    public static final String O1 = "O+1";
     public static final String U_3 = "U-3";
     public static final String U_2 = "U-2";
     public static final String U_1 = "U-1";
     public static final String U_0 = "U-0";
+    public static final String U1 = "U+1";
     private final RecordAHRepository repository;
     private DatePicker datePickerBegin = new DatePicker("Begin");
     private DatePicker datePickerEnd = new DatePicker("End");
@@ -78,6 +82,8 @@ public class RecordAHLayout extends VerticalLayout {
     private Label countHD1 = new Label();
     private Label host0 = new Label();
     private Label countH0 = new Label();
+    private Label host1 = new Label();
+    private Label countH1 = new Label();
     private Label awayDown3 = new Label();
     private Label countAD3 = new Label();
     private Label awayDown2 = new Label();
@@ -86,14 +92,18 @@ public class RecordAHLayout extends VerticalLayout {
     private Label countAD1 = new Label();
     private Label away0 = new Label();
     private Label countA0 = new Label();
+    private Label away1 = new Label();
+    private Label countA1 = new Label();
     private Label goalOver3 = new Label();
     private Label countGO3 = new Label();
     private Label goalOver2 = new Label();
     private Label countGO2 = new Label();
     private Label goalOver1 = new Label();
-    private Label countGO0 = new Label();
-    private Label goalOver0 = new Label();
     private Label countGO1 = new Label();
+    private Label goalOver0 = new Label();
+    private Label countGO0 = new Label();
+    private Label goalOver025 = new Label();
+    private Label countGO025 = new Label();
     private Label goalUnder3 = new Label();
     private Label countGU3 = new Label();
     private Label goalUnder2 = new Label();
@@ -102,6 +112,8 @@ public class RecordAHLayout extends VerticalLayout {
     private Label countGU1 = new Label();
     private Label goalUnder0 = new Label();
     private Label countGU0 = new Label();
+    private Label goalUnder025 = new Label();
+    private Label countGU025 = new Label();
     private FooterRow.FooterCell footerCellCost;
     private HorizontalLayout hostLayout;
     private HorizontalLayout awayLayout;
@@ -138,10 +150,10 @@ public class RecordAHLayout extends VerticalLayout {
                 newButton, collapseButton, chartPfButton);
         horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
 
-        hostLayout = new HorizontalLayout(hostDwon3, countHD3, hostDwon2, countHD2, hostDwon1, countHD1, host0, countH0);
-        awayLayout = new HorizontalLayout(awayDown3, countAD3, awayDown2, countAD2, awayDown1, countAD1, away0, countA0);
-        goalOverLayout = new HorizontalLayout(goalOver3, countGO3, goalOver2, countGO2, goalOver1, countGO1, goalOver0, countGO0);
-        goalUnderLayout = new HorizontalLayout(goalUnder3, countGU3, goalUnder2, countGU2, goalUnder1, countGU1, goalUnder0, countGU0);
+        hostLayout = new HorizontalLayout(hostDwon3, countHD3, hostDwon2, countHD2, hostDwon1, countHD1, host0, countH0, host1, countH1);
+        awayLayout = new HorizontalLayout(awayDown3, countAD3, awayDown2, countAD2, awayDown1, countAD1, away0, countA0, away1, countA1);
+        goalOverLayout = new HorizontalLayout(goalOver3, countGO3, goalOver2, countGO2, goalOver1, countGO1, goalOver0, countGO0, goalOver025, countGO025);
+        goalUnderLayout = new HorizontalLayout(goalUnder3, countGU3, goalUnder2, countGU2, goalUnder1, countGU1, goalUnder0, countGU0, goalUnder025, countGU025);
 
         recordInfoGrid = createRecordInfoGrid("RecordGrid");
         FooterRow footer = recordInfoGrid.prependFooterRow();
@@ -209,147 +221,183 @@ public class RecordAHLayout extends VerticalLayout {
         HashMap<String, List<Float>> profits = new HashMap<>();
         List<Float> values = new ArrayList<>();
         ProfitEstimationAH profit = getProfit(list, ah, H_3, values);
-        hostDwon3.setText("主降3= " + String.format("%.1f", profit.getProfit()));
-        hostDwon3.setWidth("25mm");
-        countHD3.setText("W=" + profit.getWin() + " HW=" + profit.hWin + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countHD3.setWidth("60mm");
+        hostDwon3.setText("主-3=" + String.format("%.1f", profit.getProfit()));
+        hostDwon3.setWidth("22mm");
+        countHD3.setText("W" + profit.getWin() + " HW" + profit.hWin + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countHD3.setWidth("50mm");
         profits.put(H_3, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, H_2, values);
-        hostDwon2.setText("主降2= " + String.format("%.1f", profit.getProfit()));
-        hostDwon2.setWidth("25mm");
-        countHD2.setText("W=" + profit.getWin()
-                + " HW=" + profit.hWin + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countHD2.setWidth("60mm");
+        hostDwon2.setText("主-2=" + String.format("%.1f", profit.getProfit()));
+        hostDwon2.setWidth("22mm");
+        countHD2.setText("W" + profit.getWin()
+                + " HW" + profit.hWin + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countHD2.setWidth("50mm");
         profits.put(H_2, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, H_1, values);
-        hostDwon1.setText("主降1= " + String.format("%.1f", profit.getProfit()));
-        hostDwon1.setWidth("25mm");
-        countHD1.setText("W=" + profit.getWin()
-                + " HW=" + profit.getHWin() + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countHD1.setWidth("60mm");
+        hostDwon1.setText("主-1=" + String.format("%.1f", profit.getProfit()));
+        hostDwon1.setWidth("22mm");
+        countHD1.setText("W" + profit.getWin()
+                + " HW" + profit.getHWin() + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countHD1.setWidth("50mm");
         profits.put(H_1, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, H_0, values);
-        host0.setText("主0= " + String.format("%.1f", profit.getProfit()));
-        host0.setWidth("25mm");
-        countH0.setText("W=" + profit.getWin()
-                + " HW=" + profit.getHWin() + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countH0.setWidth("60mm");
+        host0.setText("主0=" + String.format("%.1f", profit.getProfit()));
+        host0.setWidth("22mm");
+        countH0.setText("W" + profit.getWin()
+                + " HW" + profit.getHWin() + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countH0.setWidth("50mm");
         profits.put(H_0, new ArrayList<>(values));
 
         values.clear();
+        profit = getProfit(list, ah, H1, values);
+        host1.setText("主+1=" + String.format("%.1f", profit.getProfit()));
+        host1.setWidth("22mm");
+        countH1.setText("W" + profit.getWin()
+                + " HW" + profit.getHWin() + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countH1.setWidth("50mm");
+        profits.put(H1, new ArrayList<>(values));
+
+        values.clear();
         profit = getProfit(list, ah, A_3, values);
-        awayDown3.setText("客降3= " + String.format("%.1f", profit.getProfit()));
-        awayDown3.setWidth("25mm");
-        countAD3.setText("W=" + profit.getWin()
-                + " HW=" + profit.hWin + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countAD3.setWidth("60mm");
+        awayDown3.setText("客-3=" + String.format("%.1f", profit.getProfit()));
+        awayDown3.setWidth("22mm");
+        countAD3.setText("W" + profit.getWin()
+                + " HW" + profit.hWin + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countAD3.setWidth("50mm");
         profits.put(A_3, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, A_2, values);
-        awayDown2.setText("客降2= " + String.format("%.1f", profit.getProfit()));
-        awayDown2.setWidth("25mm");
-        countAD2.setText("W=" + profit.getWin()
-                + " HW=" + profit.hWin + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countAD2.setWidth("60mm");
+        awayDown2.setText("客-2= " + String.format("%.1f", profit.getProfit()));
+        awayDown2.setWidth("22mm");
+        countAD2.setText("W" + profit.getWin()
+                + " HW" + profit.hWin + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countAD2.setWidth("50mm");
         profits.put(A_2, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, A_1, values);
-        awayDown1.setText("客降1= " + String.format("%.1f", profit.getProfit()));
-        awayDown1.setWidth("25mm");
-        countAD1.setText("W=" + profit.getWin()
-                + " HW=" + profit.getHWin() + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countAD1.setWidth("60mm");
+        awayDown1.setText("客-1= " + String.format("%.1f", profit.getProfit()));
+        awayDown1.setWidth("22mm");
+        countAD1.setText("W" + profit.getWin()
+                + " HW" + profit.getHWin() + " P" + profit.getDraw() + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countAD1.setWidth("50mm");
         profits.put(A_1, new ArrayList<>(values));
 
         values.clear();
         profit = getProfit(list, ah, A_0, values);
-        away0.setText("客0= " + String.format("%.1f", profit.getProfit()));
-        away0.setWidth("25mm");
-        countA0.setText("W=" + profit.getWin()
-                + " HW=" + profit.getHWin() + " P=" + profit.getDraw() + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countA0.setWidth("60mm");
+        away0.setText("客0=" + String.format("%.1f", profit.getProfit()));
+        away0.setWidth("22mm");
+        countA0.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countA0.setWidth("50mm");
         profits.put(A_0, new ArrayList<>(values));
 
         values.clear();
+        profit = getProfit(list, ah, A1, values);
+        away1.setText("客+1=" + String.format("%.1f", profit.getProfit()));
+        away1.setWidth("22mm");
+        countA1.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countA1.setWidth("50mm");
+        profits.put(A1, new ArrayList<>(values));
+
+        values.clear();
         profit = getGoalLineEstimation(list, gl, O_3, values);
-        goalOver3.setText("大-3= " + String.format("%.1f", profit.getProfit()));
-        goalOver3.setWidth("25mm");
-        countGO3.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGO3.setWidth("60mm");
+        goalOver3.setText("大-3=" + String.format("%.1f", profit.getProfit()));
+        goalOver3.setWidth("22mm");
+        countGO3.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGO3.setWidth("50mm");
         profits.put(O_3, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, O_2, values);
-        goalOver2.setText("大-2= " + String.format("%.1f", profit.getProfit()));
-        goalOver2.setWidth("25mm");
-        countGO2.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGO2.setWidth("60mm");
+        goalOver2.setText("大-2=" + String.format("%.1f", profit.getProfit()));
+        goalOver2.setWidth("22mm");
+        countGO2.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGO2.setWidth("50mm");
         profits.put(O_2, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, O_1, values);
-        goalOver1.setText("大-1= " + String.format("%.1f", profit.getProfit()));
-        goalOver1.setWidth("25mm");
-        countGO1.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGO1.setWidth("60mm");
+        goalOver1.setText("大-1=" + String.format("%.1f", profit.getProfit()));
+        goalOver1.setWidth("22mm");
+        countGO1.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGO1.setWidth("50mm");
         profits.put(O_1, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, O_0, values);
-        goalOver0.setText("大= " + String.format("%.1f", profit.getProfit()));
-        goalOver0.setWidth("25mm");
-        countGO0.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGO0.setWidth("60mm");
+        goalOver0.setText("大=" + String.format("%.1f", profit.getProfit()));
+        goalOver0.setWidth("22mm");
+        countGO0.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGO0.setWidth("50mm");
         profits.put(O_0, new ArrayList<>(values));
 
         values.clear();
+        profit = getGoalLineEstimation(list, gl, O1, values);
+        goalOver025.setText("大+1=" + String.format("%.1f", profit.getProfit()));
+        goalOver025.setWidth("22mm");
+        countGO025.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGO025.setWidth("50mm");
+        profits.put(O1, new ArrayList<>(values));
+
+        values.clear();
         profit = getGoalLineEstimation(list, gl, U_3, values);
-        goalUnder3.setText("小-3= " + String.format("%.1f", profit.getProfit()));
-        goalUnder3.setWidth("25mm");
-        countGU3.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGU3.setWidth("60mm");
+        goalUnder3.setText("小-3=" + String.format("%.1f", profit.getProfit()));
+        goalUnder3.setWidth("22mm");
+        countGU3.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGU3.setWidth("50mm");
         profits.put(U_3, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, U_2, values);
-        goalUnder2.setText("小-2= " + String.format("%.1f", profit.getProfit()));
-        goalUnder2.setWidth("25mm");
-        countGU2.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGU2.setWidth("60mm");
+        goalUnder2.setText("小-2=" + String.format("%.1f", profit.getProfit()));
+        goalUnder2.setWidth("22mm");
+        countGU2.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGU2.setWidth("50mm");
         profits.put(U_2, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, U_1, values);
-        goalUnder1.setText("小-1= " + String.format("%.1f", profit.getProfit()));
-        goalUnder1.setWidth("25mm");
-        countGU1.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGU1.setWidth("60mm");
+        goalUnder1.setText("小-1=" + String.format("%.1f", profit.getProfit()));
+        goalUnder1.setWidth("22mm");
+        countGU1.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGU1.setWidth("50mm");
         profits.put(U_1, new ArrayList<>(values));
 
         values.clear();
         profit = getGoalLineEstimation(list, gl, U_0, values);
-        goalUnder0.setText("小= " + String.format("%.1f", profit.getProfit()));
-        goalUnder0.setWidth("25mm");
-        countGU0.setText("W=" + profit.getWin() + " HW=" + profit.getHWin() + " P=" + profit.getDraw()
-                + " HL=" + profit.getHLose() + " L=" + profit.getLose());
-        countGU0.setWidth("60mm");
+        goalUnder0.setText("小=" + String.format("%.1f", profit.getProfit()));
+        goalUnder0.setWidth("22mm");
+        countGU0.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGU0.setWidth("50mm");
         profits.put(U_0, new ArrayList<>(values));
+
+        values.clear();
+        profit = getGoalLineEstimation(list, gl, U1, values);
+        goalUnder025.setText("小+1=" + String.format("%.1f", profit.getProfit()));
+        goalUnder025.setWidth("22mm");
+        countGU025.setText("W" + profit.getWin() + " HW" + profit.getHWin() + " P" + profit.getDraw()
+                + " HL" + profit.getHLose() + " L" + profit.getLose());
+        countGU025.setWidth("50mm");
+        profits.put(U1, new ArrayList<>(values));
 
         profitChart = new ProfitChart(list.stream().map(RecordInfo::getMatchDate).toList(), profits);
     }
@@ -441,6 +489,11 @@ public class RecordAHLayout extends VerticalLayout {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
                     diff = record.getHomeGoal() - record.getAwayGoal() + ah;
                 }
+            } else if (direction.equals(H1)) {
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = ah - 0.25f;
+                    diff = record.getHomeGoal() - record.getAwayGoal() + downAH;
+                }
             } else if (direction.equals(A_3)) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
                     downAH = -ah + 3 * 0.25f;
@@ -460,6 +513,11 @@ public class RecordAHLayout extends VerticalLayout {
             } else if (direction.equals(A_0)) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
                     diff = record.getAwayGoal() - record.getHomeGoal() - ah;
+                }
+            } else if (direction.equals(A1)) {
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    downAH = -ah - 0.25f;
+                    diff = record.getAwayGoal() - record.getHomeGoal() + downAH;
                 }
             } else {
                 profit += record.getProfit();
@@ -488,6 +546,9 @@ public class RecordAHLayout extends VerticalLayout {
                 values.add(profit);
             } else if (direction.equals(H_0) || direction.equals(A_0)) {
                 profit = 0.925f * win + 0.4625f * hWin - 0.5f * hLose - lose;
+                values.add(profit);
+            } else if (direction.equals(H1) || direction.equals(A1)) {
+                profit = 1.2f * win + 0.6f * hWin - 0.5f * hLose - lose;
                 values.add(profit);
             }
         }
@@ -541,10 +602,20 @@ public class RecordAHLayout extends VerticalLayout {
                     goal = record.getHomeGoal() + record.getAwayGoal();
                     diff = goal - goalLine;
                 }
+            } else if (direction.equals(O1)) {
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goal - goalLine - 0.25f;
+                }
             } else if (direction.equals(U_0)) {
                 if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
                     goal = record.getHomeGoal() + record.getAwayGoal();
                     diff = goalLine - goal;
+                }
+            } else if (direction.equals(U1)) {
+                if (null != record.getHomeGoal() && null != record.getAwayGoal()) {
+                    goal = record.getHomeGoal() + record.getAwayGoal();
+                    diff = goalLine - goal - 0.25f;
                 }
             }
 
@@ -571,6 +642,9 @@ public class RecordAHLayout extends VerticalLayout {
                 values.add(profit);
             } else if (direction.equals(O_0) || direction.equals(U_0)) {
                 profit = 0.925f * win + 0.4625f * hWin - 0.5f * hLose - lose;
+                values.add(profit);
+            } else if (direction.equals(O1) || direction.equals(U1)) {
+                profit = 1.2f * win + 0.6f * hWin - 0.5f * hLose - lose;
                 values.add(profit);
             }
         }

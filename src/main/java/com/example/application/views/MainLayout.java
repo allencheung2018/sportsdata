@@ -23,7 +23,8 @@ public class MainLayout extends AppLayout {
             LumoUtility.FontSize.LARGE, 
             LumoUtility.Margin.MEDIUM);
 
-        var header = new HorizontalLayout(new DrawerToggle(), logo ); 
+        DrawerToggle toggle = new DrawerToggle();
+        var header = new HorizontalLayout(toggle, logo );
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER); 
         header.setWidthFull();
